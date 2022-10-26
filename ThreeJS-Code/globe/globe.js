@@ -1,4 +1,3 @@
-
 window.onload = function init() 
 {
 	const canvas = document.getElementById( "gl-canvas" );
