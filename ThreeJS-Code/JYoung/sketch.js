@@ -16,7 +16,7 @@ const SCREEN_HEIGHT = window.innerHeight;
 window.onload = function init() 
 { 
   //const p = SUN.radius;
-  console.log();
+  
 	const canvas = document.getElementById( "gl-canvas" );
   // RENDERER
   const renderer = new THREE.WebGLRenderer({
@@ -137,8 +137,9 @@ window.onload = function init()
   render();
 
   function render(){
-    //time = clock.getElapsedTime();    
-    //console.log(movement);
+    var time = clock.getElapsedTime(); 
+
+    console.log(time);
     controls.update();
     movement +=0.1;
     sunMesh.rotation.y = movement * 0.05
