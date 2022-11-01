@@ -1,14 +1,105 @@
 
 <html>
-<script type="module" src="js/three.min.js"></script>
-<script type="module" src="js/GLTFLoader.js"></script>		
-<script type="module" src="js/OrbitControls.js"></script>		
-<script type='module' src='sketch.js'></script>
+    <head>
+      <title>Solar System</title>
+      <style>
+         body { margin: 0; }
+         #gl-canvas { width: 100%; height: 100% }
+         #container {
+         position: relative;  /* 자식이 이 요소를 기준 삼도록 합니다. */
+         width: 100%;
+         height: 100%;
+         overflow: hidden;
+         }
+         #labels {
+         position: absolute;  /* 캔버스 위에 자리잡도록 합니다. */
+         left: 0;             /* id=container 위 왼쪽에 기준하도록 합니다. */
+         top: 0;
+         color: white;
+         }
+         .Button
+         {
+            position:fixed;
+            width:100px;
+            height:20px;
+            border:1px solid white;
+            cursor:pointer;
+            background-color:rgba(101,77,165,0.7);
+            padding:5px;
+            text-align:center;
+            color:white;
+         }
+            #Button0 { 
+            right: 5%;
+            top: 5%;
+         }
+            #Button1 { 
+            right: 5%;
+            top: 10%;
+         }
+            #Button2 { 
+            right: 5%;
+            top: 15%;
+         }
+            #Button3 { 
+            right: 5%;
+            top: 20%;
+         }
+            #Button4 { 
+            right: 5%;
+            top: 25%;
+         }
+            #Button5 { 
+            right: 5%;
+            top: 30%;
+         }
+            #Button6 { 
+            right: 5%;
+            top: 35%;
+         }
+            #Button7 { 
+            right: 5%;
+            top: 40%;
+         }
+            #Button8 { 
+            right: 5%;
+            top: 45%;
+         }
+            #Button9 { 
+            right: 5%;
+            top: 50%;
+         }
+            #Button_Init{
+                right: 5%;
+            top: 55%;
+            }
+      </style>
+   </head>
+<script type="text/javascript" src="js/three.min.js"></script>
+<script type="text/javascript" src="js/GLTFLoader.js"></script>      
+<script type="text/javascript" src="js/OrbitControls.js"></script>      
+<script type="text/module" src="sketch.js"></script>
 <body>
 
-<canvas id="gl-canvas" width="1920" height="1080">
-Oops ... your browser doesn't support the HTML5 canvas element
-</canvas>
+<div id="container">
+   <canvas id="gl-canvas" width="1920" height="1080">
+   Oops ... your browser doesn't support the HTML5 canvas element
+   </canvas>
+   <div id = "labels"></div>
+</div>
+
+<div id=Button0 class="Button">SUN</div>
+<div id=Button1 class="Button">MERCURY</div>
+<div id=Button2 class="Button">VENUS</div>
+<div id=Button3 class="Button">EARTH</div>
+<div id=Button4 class="Button">MARS</div>
+<div id=Button5 class="Button">JUPITER</div>
+<div id=Button6 class="Button">SATURN</div>
+<div id=Button7 class="Button">URANUS</div>
+<div id=Button8 class="Button">NEPTUNE</div>
+<div id=Button9 class="Button">PLUTO</div>
+<div id=Button_Init class="Button">Init</div>
+
 
 </body>
 </html>  
