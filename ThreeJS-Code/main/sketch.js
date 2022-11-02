@@ -1,7 +1,6 @@
 // import * as Planet from './src/constants/planets.js';
 // import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR,KM } from './src/constants/index.js';
-// // import {THREE} from './node_modules/three';
-
+//import {THREE} from './node_modules/three';
 const settings = {
   // Make the loop animated
   animate: true,
@@ -12,19 +11,17 @@ const settings = {
 
 
 //camera option(global object)
-var camera
-var window
+var camera;
 var projector, mouse = { x: 0, y: 0 };
-var renderer
-var scene
-var controls
+var renderer;
+var scene;
+var controls;
 //value is object distance z(정면에서 보기위해서)
-var value_z = 0
+var value_z = 0;
 //move flag(버튼을 연속으로 못누르게 lock)
-var flag = 0
+var flag = 0;
 //rendering ID
 var moveID;
-
 const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
 
@@ -32,12 +29,13 @@ window.onload = function init()
 { 
   //const p = SUN.radius;
   
-	canvas = document.getElementById( "gl-canvas" );
+	var canvas = document.getElementById( "gl-canvas" );
   // RENDERER
-  renderer = new THREE.WebGLRenderer({
+  var renderer = new THREE.WebGLRenderer({
     canvas,
     alpha : true,
   });
+
   renderer.setClearColor("#121212", 1);
 
   // CAMERA
@@ -87,8 +85,8 @@ window.onload = function init()
   const geometry = new THREE.SphereGeometry(1, 32, 16);
 
   //plants number
-  plants_number = 10;//-DongMin
-  plants_Mesh = [];//-DongMin
+  var plants_number = 10;//-DongMin
+  var plants_Mesh = [];//-DongMin
 
   const sunMesh = new THREE.Mesh(geometry, sunMaterial);
   sunMesh.position.set(0, 0, 0);
@@ -240,7 +238,7 @@ window.onload = function init()
   //camera button
   var button_list = [];
   var object_num = [];
-  for(i=0; i < plants_number; i++){
+  for(var i=0; i < plants_number; i++){
     button_list = button_list.concat("Button"+i);
   }
 
@@ -258,12 +256,12 @@ window.onload = function init()
 
   //plant
   for(i=1;i<plants_number;i++){  
-    temp_button = document.getElementById(button_list[i])
+    var temp_button = document.getElementById(button_list[i])
     temp_button.button = i;
     temp_button.onclick = function(event){
       //scene.children[5].children[0].position.x
       value_z = 5;//value_Z는 정면에서 보기 위한 z축의 값
-      object_num = event.path[0].button;//plant order
+      object_num = event.composedPath[0].button;//plant order
       // moveCam(scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z,scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z);
 
       var tempV = new THREE.Vector3();
