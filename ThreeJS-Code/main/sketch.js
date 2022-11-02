@@ -338,8 +338,10 @@ window.onload = function init()
   /*
   * Space Ship
   */
+  var s_flag = true;
   document.getElementById("Button_Space_ship").onclick = function(){
-    space_ship_render();
+    space_ship_render(s_flag);
+    s_flag = false;
   };
 
 
@@ -411,7 +413,7 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 /*
 * Spcae ship
 */
-function space_ship_render(){
+function space_ship_render(s_flag){
   window.cancelAnimationFrame(moveID);
 
   var goal,follow,mesh,keys;
@@ -425,18 +427,22 @@ function space_ship_render(){
   var a = new THREE.Vector3;
   var b = new THREE.Vector3;
 
-  var geometry = new THREE.BoxBufferGeometry( 0.1, 0.1, 0.1 );// 테스트용 큐브 object
+  var geometry = new THREE.BoxBufferGeometry( 1, 1, 1 );// 테스트용 큐브 object
   var material = new THREE.MeshNormalMaterial();
 
-  mesh = new THREE.Mesh( geometry, material );
+  if(s_flag)
+  {
+    mesh = new THREE.Mesh( geometry, material );
+    mesh.position.set(2,2,2);
+      
+    goal = new THREE.Object3D;
+    follow = new THREE.Object3D;
+    follow.position.z = -coronaSafetyDistance;
+    mesh.add( follow );
     
-  goal = new THREE.Object3D;
-  follow = new THREE.Object3D;
-  follow.position.z = -coronaSafetyDistance;
-  mesh.add( follow );
-  
-  goal.add( camera );
-  scene.add( mesh );
+    goal.add( camera );
+    scene.add( mesh );
+  }
 
 
   keys = {//방향키 초기화
@@ -472,19 +478,19 @@ function animate_spaceship() {
   speed = 0.0;
   
   if ( keys.w )//w면 앞으로
-    speed = 0.01;
+    speed = 0.1;
   else if ( keys.s )//s면 뒤로
-    speed = -0.01;
+    speed = -0.1;
 
   velocity += ( speed - velocity ) * .3;
   mesh.translateZ( velocity );
 
   if ( keys.a ){//a면 왼쪽 회전
-    mesh.rotateY(0.05);
+    mesh.rotateY(0.02);
     
   }
   else if ( keys.d )//d면 오른쪽 회전
-    mesh.rotateY(-0.05);
+    mesh.rotateY(-0.02);
     
   //////////////////////////////////////////
   //이부분에서 물체 회전 할 때 카메라 회전하는게 조금 부자연스러워서 로직 수정해야함
@@ -494,7 +500,7 @@ function animate_spaceship() {
     dir.copy( a ).sub( b ).normalize();
     const dis = a.distanceTo( b ) - coronaSafetyDistance;
     goal.position.addScaledVector( dir, dis );
-    goal.position.lerp(temp, 0.02);
+    goal.position.lerp(temp, 0.1);
     temp.setFromMatrixPosition(follow.matrixWorld);
     
     camera.lookAt( mesh.position );
