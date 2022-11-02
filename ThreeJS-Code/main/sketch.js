@@ -1,6 +1,6 @@
-// import * as Planet from './src/constants/planets.js';
-// import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR,KM } from './src/constants/index.js';
-//import {THREE} from './node_modules/three';
+import * as Planet from './src/constants/planets.js';
+import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR,KM } from './src/constants/index.js';
+// import {THREE} from './node_modules/three'; <- 이 부분에서 오류 나는 듯
 const settings = {
   // Make the loop animated
   animate: true,
@@ -9,6 +9,38 @@ const settings = {
   scaleToView: true
 };
 
+
+//compute angle
+function angleToRad (angle) {
+  return Math.PI / 180 * angle
+}
+
+//rotate XZ coordinate
+function rotateXZ (x, z, rotate) {
+  var xx = x * Math.cos(angleToRad(rotate)) - z * Math.sin(angleToRad(rotate))
+  var zz = x * Math.sin(angleToRad(rotate)) + z * Math.cos(angleToRad(rotate))
+  return [xx, zz]
+}
+
+function makeCircle (radius = 30, rotate = 50, minAngle = 5) {
+
+  var vertices = []
+
+  for(var i = 0; i < 360; i += minAngle){
+      // vertices.push(new THREE.Vector3(0, 0, 0))
+
+      var x = Math.cos(angleToRad(i)) * radius
+      var z = Math.sin(angleToRad(i)) * radius
+      var xn = Math.cos(angleToRad(i + minAngle)) * radius
+      var zn = Math.sin(angleToRad(i + minAngle)) * radius
+      
+
+      vertices.push(new THREE.Vector3(rotateXZ(x, z, rotate)[0], 0,rotateXZ(x, z, rotate)[1] ))
+      vertices.push(new THREE.Vector3(rotateXZ(xn, zn, rotate)[0], 0,rotateXZ(xn, zn, rotate)[1]))
+
+  }   
+  return vertices
+}
 
 //camera option(global object)
 var camera;
@@ -78,6 +110,7 @@ window.onload = function init()
 
   const labelContainerElem = document.querySelector('#labels');//-DongMin
 
+
   //scene
   scene = new THREE.Scene();
   /*
@@ -94,6 +127,11 @@ window.onload = function init()
   ]);
   texture.encoding = THREE.sRGBEncoding;
   scene.background = texture;
+
+  const lineMaterial = new THREE.LineBasicMaterial ({
+    linewidth: 100
+  });
+
 
   /*
    * MESH
@@ -114,6 +152,11 @@ window.onload = function init()
   const mercuryMesh = new THREE.Mesh(geometry, mercuryMaterial);
   createPlanet(scene, mercuryMesh, mercuryGroup, 25, 0.8,"MERCURY");//-DongMin
   plants_Mesh = plants_Mesh.concat(mercuryMesh);//-DongMin
+
+  const lineGeometry = new THREE.BufferGeometry().setFromPoints(makeCircle(25));
+  console.log(makeCircle())
+  const line = new THREE.Line(lineGeometry, lineMaterial);
+  scene.add(line);
 
   const venusGroup = new THREE.Group();
   const venusMesh = new THREE.Mesh(geometry, venusMaterial);
