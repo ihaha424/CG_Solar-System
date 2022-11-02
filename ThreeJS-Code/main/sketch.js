@@ -56,6 +56,7 @@ var flag = 0;
 var moveID;
 const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
+const tempV= new THREE.Vector3();
 
 window.onload = function init() 
 { 
@@ -146,6 +147,10 @@ window.onload = function init()
   sunMesh.position.set(0, 0, 0);
   sunMesh.scale.setScalar(10);
   scene.add(sunMesh);
+  const elem = document.createElement('button');//-DongMin
+  elem.textContent = "SUN";//-DongMin
+  elem.name = "SUN";
+  labelContainerElem.appendChild(elem);//-DongMin
   plants_Mesh = plants_Mesh.concat(sunMesh);//-DongMin
   
   const mercuryGroup = new THREE.Group();
@@ -221,6 +226,7 @@ window.onload = function init()
   var delta = 0;
   var movement = 1;
 
+
   // draw each frame
   render();
 
@@ -230,6 +236,7 @@ window.onload = function init()
     // console.log(time);
     controls.update();
     movement +=0.1;
+
     sunMesh.rotation.y = movement * 0.05
 
     mercuryGroup.rotation.y = movement * 0.5;
@@ -259,6 +266,16 @@ window.onload = function init()
     plutoGroup.rotation.y = movement * 0.005;
     plutoMesh.rotation.y = movement * 0.2;
 
+    for(var i = 0; i<10; i++){
+      plants_Mesh[i].updateWorldMatrix(true,false);
+      plants_Mesh[i].getWorldPosition(tempV);
+
+      tempV.project(camera);
+      const x = (tempV.x * .5+ .5) * canvas.clientWidth;
+      const y = (tempV.y * -.5 + .5) * canvas.clientHeight;
+      labelContainerElem.childNodes[i].style.transform = `translate(-50%, -50%) translate(${ x }px,${ y }px)`;
+    }
+    
     requestAnimationFrame(render);
     renderer.render(scene, camera);
   }
@@ -266,14 +283,16 @@ window.onload = function init()
       //controls.dispose();
       //renderer.dispose();
   function createPlanet(scene, mesh, group, x, scale, name) {//-DongMin
-    const elem = document.createElement('div');//-DongMin
+    const elem = document.createElement('button');//-DongMin
     elem.textContent = name;//-DongMin
+    elem.name = name;
     labelContainerElem.appendChild(elem);//-DongMin
     mesh.position.set(x, 0, 0);
     mesh.scale.setScalar(scale);
     group.add(mesh);
     scene.add(group);
   }
+
   function createSpotlights(scene) {
     var color = 0xFFFFFF;
     var intensity = 5;
@@ -302,16 +321,21 @@ window.onload = function init()
   }
 
   //sun
-  document.getElementById(button_list[0]).onclick = function(event){
+  document.getElementById(button_list[0]).onclick = function (event){
     value_z = 15;//value_Z는 정면에서 보기 위한 z축의 값
     object_num = 0;
     sunMesh.updateWorldMatrix(true,false);
-    var tempV = new THREE.Vector3();
     plants_Mesh[0].getWorldPosition(tempV);
 
     moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,plants_Mesh[0]);
     //moveCam(scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z,scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z);
   };
+  labelContainerElem.childNodes[0].onclick = function (event){
+    value_z = 15;
+    sunMesh.updateWorldMatrix(true,false);
+    plants_Mesh[0].getWorldPosition(tempV);
+    moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,plants_Mesh[0]);
+    };
 
   //plant
   for(i=1;i<plants_number;i++){  
@@ -323,13 +347,21 @@ window.onload = function init()
       object_num = event.path[0].button;//plant order
       // moveCam(scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z,scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z);
 
-      var tempV = new THREE.Vector3();
       plants_Mesh[object_num].getWorldPosition(tempV);
 
       moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,plants_Mesh[object_num]);
 
     };
+    labelContainerElem.childNodes[i].id = i;
+    labelContainerElem.childNodes[i].onclick = function (event){
+      value_z = 5;//value_Z는 정면에서 보기 위한 z축의 값
+      console.log(event);
+      object_num = event.path[0].id;
+      plants_Mesh[object_num].getWorldPosition(tempV);
+      moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,plants_Mesh[object_num]);
+    }
   }
+
   document.getElementById("Button_Init").onclick = function(){
     value_z = 0;
     moveCam(0, 30, 0,0,0,0,0);
@@ -393,7 +425,6 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
     else{
       window.cancelAnimationFrame(moveID);
     function move_object(){
-      var tempV = new THREE.Vector3();
       Mesh.getWorldPosition(tempV);
       camera.position.set(tempV.x,tempV.y,tempV.z + value_z);
       controls.target.set(tempV.x,tempV.y,tempV.z);
