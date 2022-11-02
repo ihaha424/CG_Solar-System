@@ -1,6 +1,6 @@
-import * as Planet from './src/constants/planets.js';
-import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR,KM } from './src/constants/index.js';
-// import {THREE} from './node_modules/three';
+// import * as Planet from './src/constants/planets.js';
+// import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR,KM } from './src/constants/index.js';
+// // import {THREE} from './node_modules/three';
 
 const settings = {
   // Make the loop animated
@@ -32,20 +32,20 @@ window.onload = function init()
 { 
   //const p = SUN.radius;
   
-	const canvas = document.getElementById( "gl-canvas" );
+	canvas = document.getElementById( "gl-canvas" );
   // RENDERER
-  const renderer = new THREE.WebGLRenderer({
+  renderer = new THREE.WebGLRenderer({
     canvas,
     alpha : true,
   });
   renderer.setClearColor("#121212", 1);
 
   // CAMERA
-  const camera = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 1000);
+  camera = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 1000);
   camera.position.set(30, 5, 35);
 
   // ORBIT CONTROLS
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.target.set(30, 0, 0);
 
   /*
@@ -83,7 +83,7 @@ window.onload = function init()
   /*
    * MESH
    */
-  const scene = new THREE.Scene();
+  scene = new THREE.Scene();
   const geometry = new THREE.SphereGeometry(1, 32, 16);
 
   //plants number
@@ -94,41 +94,50 @@ window.onload = function init()
   sunMesh.position.set(0, 0, 0);
   sunMesh.scale.setScalar(10);
   scene.add(sunMesh);
-
+  plants_Mesh = plants_Mesh.concat(sunMesh);//-DongMin
+  
   const mercuryGroup = new THREE.Group();
   const mercuryMesh = new THREE.Mesh(geometry, mercuryMaterial);
   createPlanet(scene, mercuryMesh, mercuryGroup, 25, 0.8,"MERCURY");//-DongMin
   plants_Mesh = plants_Mesh.concat(mercuryMesh);//-DongMin
 
   const venusGroup = new THREE.Group();
+  const venusMesh = new THREE.Mesh(geometry, venusMaterial);
   createPlanet(scene, venusMesh, venusGroup, 28, 0.9,"VENUS");//-DongMin
   plants_Mesh = plants_Mesh.concat(venusMesh);//-DongMin
 
   const earthGroup = new THREE.Group();
+  const earthMesh = new THREE.Mesh(geometry, earthMaterial);
   createPlanet(scene, earthMesh, earthGroup, 31, 1,"EARTH");//-DongMin
   plants_Mesh = plants_Mesh.concat(earthMesh);//-DongMin
 
   const marsGroup = new THREE.Group();
+  const marsMesh = new THREE.Mesh(geometry, marsMaterial);
   createPlanet(scene, marsMesh, marsGroup, 34, 0.8,"MARS");//-DongMin
   plants_Mesh = plants_Mesh.concat(marsMesh);//-DongMin
 
   const jupiterGroup = new THREE.Group();
+  const jupiterMesh = new THREE.Mesh(geometry, jupiterMaterial);
   createPlanet(scene, jupiterMesh, jupiterGroup, 42, 3.5,"JUPITER");//-DongMin
   plants_Mesh = plants_Mesh.concat(jupiterMesh);//-DongMin
 
   const saturnGroup = new THREE.Group();
+  const saturnMesh = new THREE.Mesh(geometry, saturnMaterial);
   createPlanet(scene, saturnMesh, saturnGroup, 50, 2.9,"SATURN");//-DongMin
   plants_Mesh = plants_Mesh.concat(saturnMesh);//-DongMin
 
   const uranusGroup = new THREE.Group();
+  const uranusMesh = new THREE.Mesh(geometry, uranusMaterial);
   createPlanet(scene, uranusMesh, uranusGroup, 56, 1.7, "URANUS");//-DongMin
   plants_Mesh = plants_Mesh.concat(uranusMesh);//-DongMin
 
   const neptuneGroup = new THREE.Group();
+  const neptuneMesh = new THREE.Mesh(geometry, neptuneMaterial);
   createPlanet(scene, neptuneMesh, neptuneGroup, 60, 1.65, "NEPTUNE");//-DongMin
   plants_Mesh = plants_Mesh.concat(neptuneMesh);//-DongMin
 
   const plutoGroup = new THREE.Group();
+  const plutoMesh = new THREE.Mesh(geometry, plutoMaterial);
   createPlanet(scene, plutoMesh, plutoGroup, 64, 0.5,"PLUTO");//-DongMin
   plants_Mesh = plants_Mesh.concat(plutoMesh);//-DongMin
 
@@ -209,67 +218,67 @@ window.onload = function init()
     scene.add(group);
   }
   function createSpotlights(scene) {
-  var color = 0xFFFFFF;
-  var intensity = 5;
-  var distance = 25;
-  var angle = Math.PI/7;
+    var color = 0xFFFFFF;
+    var intensity = 5;
+    var distance = 25;
+    var angle = Math.PI/7;
 
-  new Array(6).fill('').forEach((item, i) => {
-    var spotlight = new THREE.SpotLight(color, intensity, distance, angle);
-    var value = i % 2 === 0 ? 25 : -25;
+    new Array(6).fill('').forEach((item, i) => {
+      var spotlight = new THREE.SpotLight(color, intensity, distance, angle);
+      var value = i % 2 === 0 ? 25 : -25;
 
-    spotlight.position.set(
-      i < 2 ? value : 0,
-      i >= 2 && i < 4 ? value : 0,
-      i >= 4 ? value : 0
-    );
+      spotlight.position.set(
+        i < 2 ? value : 0,
+        i >= 2 && i < 4 ? value : 0,
+        i >= 4 ? value : 0
+      );
     scene.add( spotlight );
   });
 }
 
 
-//camera button
-var button_list = [];
-var object_num = [];
-for(i=0; i < plants_number; i++){
-button_list = button_list.concat("Button"+i);
-}
+  //camera button
+  var button_list = [];
+  var object_num = [];
+  for(i=0; i < plants_number; i++){
+    button_list = button_list.concat("Button"+i);
+  }
 
-//sun
-document.getElementById(button_list[0]).onclick = function(event){
-value_z = 15;//value_Z는 정면에서 보기 위한 z축의 값
-object_num = 0;
-sunMesh.updateWorldMatrix(true,false);
-var tempV = new THREE.Vector3();
-plants_Mesh[0].getWorldPosition(tempV);
+  //sun
+  document.getElementById(button_list[0]).onclick = function(event){
+    value_z = 15;//value_Z는 정면에서 보기 위한 z축의 값
+    object_num = 0;
+    sunMesh.updateWorldMatrix(true,false);
+    var tempV = new THREE.Vector3();
+    plants_Mesh[0].getWorldPosition(tempV);
 
-moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,plants_Mesh[0]);
-//moveCam(scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z,scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z);
-};
+    moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,plants_Mesh[0]);
+    //moveCam(scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z,scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z);
+  };
 
-//plant
-for(i=1;i<plants_number;i++){  
-temp_button = document.getElementById(button_list[i])
-temp_button.button = i;
-temp_button.onclick = function(event){
-//scene.children[5].children[0].position.x
-value_z = 5;//value_Z는 정면에서 보기 위한 z축의 값
-object_num = event.path[0].button;//plant order
-// moveCam(scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z,scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z);
+  //plant
+  for(i=1;i<plants_number;i++){  
+    temp_button = document.getElementById(button_list[i])
+    temp_button.button = i;
+    temp_button.onclick = function(event){
+      //scene.children[5].children[0].position.x
+      value_z = 5;//value_Z는 정면에서 보기 위한 z축의 값
+      object_num = event.path[0].button;//plant order
+      // moveCam(scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z,scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z);
 
-var tempV = new THREE.Vector3();
-plants_Mesh[object_num].getWorldPosition(tempV);
+      var tempV = new THREE.Vector3();
+      plants_Mesh[object_num].getWorldPosition(tempV);
 
-moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,plants_Mesh[object_num]);
+      moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,plants_Mesh[object_num]);
 
-};
-}
-document.getElementById("Button_Init").onclick = function(){
-value_z = 0;
-moveCam(0, 30, 0,0,0,0,0);
-};
+    };
+  }
+  document.getElementById("Button_Init").onclick = function(){
+    value_z = 0;
+    moveCam(0, 30, 0,0,0,0,0);
+  };
 
-//////////////////
+  //////////////////
 
 };
 
@@ -277,63 +286,63 @@ moveCam(0, 30, 0,0,0,0,0);
 //camera moving -DongMin
 function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 {   
-window.cancelAnimationFrame(moveID);
-if(flag == 1)
+  window.cancelAnimationFrame(moveID);
+  if(flag == 1)
   return;
-//button lock
-flag = 1;
+  //button lock
+  flag = 1;
 
-loading_num = 20;
+  loading_num = 20;
 
-//move eye changeed value(변화량)
-m_e_x = (eye_x - camera.position.x)/loading_num;
-m_e_y = (eye_y - camera.position.y)/loading_num;
-m_e_z = (eye_z - camera.position.z + value_z)/loading_num;
-//move target changeed value(변화량)
-m_t_x = (target_x - controls.target.x)/loading_num;
-m_t_y = (target_y - controls.target.y)/loading_num;
-m_t_z = (target_z - controls.target.z)/loading_num;
+  //move eye changeed value(변화량)
+  m_e_x = (eye_x - camera.position.x)/loading_num;
+  m_e_y = (eye_y - camera.position.y)/loading_num;
+  m_e_z = (eye_z - camera.position.z + value_z)/loading_num;
+  //move target changeed value(변화량)
+  m_t_x = (target_x - controls.target.x)/loading_num;
+  m_t_y = (target_y - controls.target.y)/loading_num;
+  m_t_z = (target_z - controls.target.z)/loading_num;
 
-// console.log(m_e_x,m_e_y,m_e_z);
-// console.log(m_t_x,m_t_y,m_t_z);
+  // console.log(m_e_x,m_e_y,m_e_z);
+  // console.log(m_t_x,m_t_y,m_t_z);
 
-//camera position
-c_x = camera.position.x;
-c_y = camera.position.y;
-c_z = camera.position.z;
+  //camera position
+  c_x = camera.position.x;
+  c_y = camera.position.y;
+  c_z = camera.position.z;
 
-//target position
-t_x = controls.target.x;
-t_y = controls.target.y;
-t_z = controls.target.z;
-i = 0;
+  //target position
+  t_x = controls.target.x;
+  t_y = controls.target.y;
+  t_z = controls.target.z;
+  i = 0;
 
-function move_view(){
-  i++;
-  camera.position.set ( c_x + i*m_e_x, c_y + i*m_e_y, c_z + i*m_e_z  );
-  controls.target.set( t_x + i*m_t_x, t_y + i*m_t_y, t_z + i*m_t_z);
-  renderer.render(scene,camera);
-  controls.update();
-  if(i != loading_num)
-     moveID=window.requestAnimationFrame(move_view);
-  else{
-     window.cancelAnimationFrame(moveID);
-  function move_object(){
-    var tempV = new THREE.Vector3();
-    Mesh.getWorldPosition(tempV);
-    camera.position.set(tempV.x,tempV.y,tempV.z + value_z);
-    controls.target.set(tempV.x,tempV.y,tempV.z);
+  function move_view(){
+    i++;
+    camera.position.set ( c_x + i*m_e_x, c_y + i*m_e_y, c_z + i*m_e_z  );
+    controls.target.set( t_x + i*m_t_x, t_y + i*m_t_y, t_z + i*m_t_z);
     renderer.render(scene,camera);
     controls.update();
-    moveID=window.requestAnimationFrame(move_object);
+    if(i != loading_num)
+      moveID=window.requestAnimationFrame(move_view);
+    else{
+      window.cancelAnimationFrame(moveID);
+    function move_object(){
+      var tempV = new THREE.Vector3();
+      Mesh.getWorldPosition(tempV);
+      camera.position.set(tempV.x,tempV.y,tempV.z + value_z);
+      controls.target.set(tempV.x,tempV.y,tempV.z);
+      renderer.render(scene,camera);
+      controls.update();
+      moveID=window.requestAnimationFrame(move_object);
+    }
+    if(Mesh != 0){
+      move_object();
+    }
+      //button unlock
+      flag = 0;
+    }
   }
-  if(Mesh != 0){
-    move_object();
-  }
-     //button unlock
-     flag = 0;
-  }
-}
-move_view();
+  move_view();
 }
 
