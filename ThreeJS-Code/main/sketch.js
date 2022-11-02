@@ -31,7 +31,7 @@ window.onload = function init()
   
 	var canvas = document.getElementById( "gl-canvas" );
   // RENDERER
-  var renderer = new THREE.WebGLRenderer({
+  renderer = new THREE.WebGLRenderer({
     canvas,
     alpha : true,
   });
@@ -237,7 +237,7 @@ window.onload = function init()
 
   //camera button
   var button_list = [];
-  var object_num = [];
+  var object_num =0;
   for(var i=0; i < plants_number; i++){
     button_list = button_list.concat("Button"+i);
   }
@@ -261,7 +261,7 @@ window.onload = function init()
     temp_button.onclick = function(event){
       //scene.children[5].children[0].position.x
       value_z = 5;//value_Z는 정면에서 보기 위한 z축의 값
-      object_num = event.composedPath[0].button;//plant order
+      object_num = event.path[0].button;//plant order
       // moveCam(scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z,scene.children[object_num].children[0].position.x,scene.children[object_num].children[0].position.y,scene.children[object_num].children[0].position.z);
 
       var tempV = new THREE.Vector3();
@@ -290,30 +290,30 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
   //button lock
   flag = 1;
 
-  loading_num = 20;
+  var loading_num = 20;
 
   //move eye changeed value(변화량)
-  m_e_x = (eye_x - camera.position.x)/loading_num;
-  m_e_y = (eye_y - camera.position.y)/loading_num;
-  m_e_z = (eye_z - camera.position.z + value_z)/loading_num;
+  var m_e_x = (eye_x - camera.position.x)/loading_num;
+  var m_e_y = (eye_y - camera.position.y)/loading_num;
+  var m_e_z = (eye_z - camera.position.z + value_z)/loading_num;
   //move target changeed value(변화량)
-  m_t_x = (target_x - controls.target.x)/loading_num;
-  m_t_y = (target_y - controls.target.y)/loading_num;
-  m_t_z = (target_z - controls.target.z)/loading_num;
+  var m_t_x = (target_x - controls.target.x)/loading_num;
+  var m_t_y = (target_y - controls.target.y)/loading_num;
+  var m_t_z = (target_z - controls.target.z)/loading_num;
 
   // console.log(m_e_x,m_e_y,m_e_z);
   // console.log(m_t_x,m_t_y,m_t_z);
 
   //camera position
-  c_x = camera.position.x;
-  c_y = camera.position.y;
-  c_z = camera.position.z;
+  var c_x = camera.position.x;
+  var c_y = camera.position.y;
+  var c_z = camera.position.z;
 
   //target position
-  t_x = controls.target.x;
-  t_y = controls.target.y;
-  t_z = controls.target.z;
-  i = 0;
+  var t_x = controls.target.x;
+  var t_y = controls.target.y;
+  var t_z = controls.target.z;
+  var i = 0;
 
   function move_view(){
     i++;
