@@ -182,9 +182,9 @@ window.onload = function init()
   render();
 
   function render(){
-    var time = clock.getElapsedTime(); 
+    // var time = clock.getElapsedTime(); 
 
-    console.log(time);
+    // console.log(time);
     controls.update();
     movement +=0.1;
     sunMesh.rotation.y = movement * 0.05
@@ -292,7 +292,13 @@ window.onload = function init()
     moveCam(0, 30, 0,0,0,0,0);
   };
 
-  //////////////////
+  /*
+  * Space Ship
+  */
+  document.getElementById("Button_Space_ship").onclick = function(){
+    space_ship_render();
+  };
+
 
 };
 
@@ -359,8 +365,37 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
   }
   move_view();
 }
-
+/*
+* Spcae ship
+*/
 function space_ship_render(){
+  window.cancelAnimationFrame(moveID);
+
+  var goal,follow,mesh,keys;
+  var coronaSafetyDistance = 0.3;
+  var velocity = 0.0;
+  var speed = 0.0;
+  var temp = new THREE.Vector3;
+  var dir = new THREE.Vector3;
+  var temp = new THREE.Vector3;
+  var dir = new THREE.Vector3;
+  var a = new THREE.Vector3;
+  var b = new THREE.Vector3;
+
+  var geometry = new THREE.BoxBufferGeometry( 0.1, 0.1, 0.1 );// 테스트용 큐브 object
+  var material = new THREE.MeshNormalMaterial();
+
+  mesh = new THREE.Mesh( geometry, material );
+    
+  goal = new THREE.Object3D;
+  follow = new THREE.Object3D;
+  follow.position.z = -coronaSafetyDistance;
+  mesh.add( follow );
+  
+  goal.add( camera );
+  scene.add( mesh );
+
+
   keys = {//방향키 초기화
     a: false,
     s: false,
