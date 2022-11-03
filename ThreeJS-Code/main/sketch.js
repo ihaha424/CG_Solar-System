@@ -57,6 +57,8 @@ var moveID;
 const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
 const tempV= new THREE.Vector3();
+//button spotlight
+var spotlight2
 
 //space_ship button
 var s_flag = true;
@@ -158,8 +160,9 @@ window.onload = function init()
   elem.textContent = "SUN";//-DongMin
   elem.name = "SUN";
   labelContainerElem.appendChild(elem);//-DongMin
+  sunMesh.userData = 20;
   plants_Mesh = plants_Mesh.concat(sunMesh);//-DongMin
-  
+
   const mercuryGroup = new THREE.Group();
   const mercuryMesh = new THREE.Mesh(geometry, mercuryMaterial);
   createPlanet(scene, mercuryMesh, mercuryGroup, 25, 0.8,"MERCURY");//-DongMin
@@ -208,6 +211,7 @@ window.onload = function init()
   const plutoMesh = new THREE.Mesh(geometry, plutoMaterial);
   createPlanet(scene, plutoMesh, plutoGroup, 64, 0.5,"PLUTO");//-DongMin
   plants_Mesh = plants_Mesh.concat(plutoMesh);//-DongMin
+
 
   /*
    * LIGHTING
@@ -295,6 +299,7 @@ window.onload = function init()
     labelContainerElem.appendChild(elem);//-DongMin
     mesh.position.set(x, 0, 0);
     mesh.scale.setScalar(scale);
+    mesh.userData = scale * 2;
     group.add(mesh);
     scene.add(group);
   }
@@ -317,7 +322,10 @@ window.onload = function init()
     scene.add( spotlight );
   });
 }
-
+  //button spotlight
+  spotlight2 = new THREE.PointLight( 0xFFFFFF,0.2);
+  spotlight2.position.set(0,0,0);
+  scene.add(spotlight2);
 
   //camera[0] button
   var button_list = [];
@@ -369,6 +377,8 @@ window.onload = function init()
 
   document.getElementById("Button_Init").onclick = function(){
     value_z = 0;
+    controls.maxDistance = 1000;
+    controls.minDistance = 5;
     moveCam(0, 30, 0,0,0,0,0);
   };
 
@@ -379,7 +389,6 @@ window.onload = function init()
     if(s_flag){
       labelContainerElem.style.display='none';
       labelContainerElem2.style.display='none';
-      
       space_ship_render();
       s_flag = false;
     }
@@ -403,8 +412,11 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 {   
   window.cancelAnimationFrame(moveID);
   window.cancelAnimationFrame(shipRenderID);
-  if(flag == 1)
+  spotlight2.position.set(0,0,0);
+  if(flag == 1){
     return;
+  }
+
   //button lock
   flag = 1;
 
@@ -445,8 +457,11 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
       window.cancelAnimationFrame(moveID);
     function move_object(){
       Mesh.getWorldPosition(tempV);
-      camera[0].position.set(tempV.x,tempV.y,tempV.z + value_z);
+      controls.maxDistance = Mesh.userData;
+      controls.minDistance = Mesh.userData;
       controls.target.set(tempV.x,tempV.y,tempV.z);
+      //클릭시 빛....애매함.
+      spotlight2.position.set(camera[0].position.x,camera[0].position.y,camera[0].position.z);
       renderer.render(scene,camera[0]);
       controls.update();
       moveID=window.requestAnimationFrame(move_object);
@@ -464,6 +479,7 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 * Spcae ship
 */
 var mesh_ship;
+var speed = 0.0;
 
 function space_ship_render(){
   window.cancelAnimationFrame(moveID);
@@ -472,7 +488,6 @@ function space_ship_render(){
   var follow,keys;
   var coronaSafetyDistance = 0.3;
   var velocity = 0.0;
-  var speed = 0.0;
   var temp = new THREE.Vector3;
   var dir = new THREE.Vector3;
   var temp = new THREE.Vector3;
@@ -484,7 +499,7 @@ function space_ship_render(){
   var material = new THREE.MeshNormalMaterial();
 
   mesh_ship = new THREE.Mesh( geometry, material );
-  mesh_ship.position.set(2,2,2);
+  mesh_ship.position.set(0,10.5,0);
     
   //goal_ship = new THREE.Object3D;
   follow = new THREE.Object3D;
@@ -498,7 +513,10 @@ function space_ship_render(){
       a: false,
       s: false,
       d: false,
-      w: false
+      w: false,
+      j: false,
+      k: false,
+      h: false
     };
     
     document.body.addEventListener( 'keydown', function(e) {
@@ -516,7 +534,7 @@ function space_ship_render(){
       
     });
     value_z = 5;
-    camera[1].position.set( mesh_ship.position.x,mesh_ship.position.y,mesh_ship.position.z + value_z);
+    camera[1].position.set( mesh_ship.position.x,mesh_ship.position.y + 3,mesh_ship.position.z - 5 );
    animate_spaceship();
   
 
@@ -526,22 +544,28 @@ function space_ship_render(){
 
     shipRenderID = requestAnimationFrame( animate_spaceship );
       
-    speed = 0.0;
     
-    if ( keys.w )//w면 앞으로
-      speed = 0.1;
-    else if ( keys.s )//s면 뒤로
-      speed = -0.1;
+    if ( keys.j )//w면 앞으로
+      speed = speed+0.05;
+    else if ( keys.k )//w면 앞으로
+      speed = speed-0.05;
+    else if ( keys.h )//w면 앞으로
+      speed = 0;
+    // else if ( keys.s )//s면 뒤로
+    //   speed = -0.1;
 
     velocity += ( speed - velocity ) * .3;
     mesh_ship.translateZ( velocity );
 
     if ( keys.a ){//a면 왼쪽 회전
       mesh_ship.rotateY(0.02);
-      
     }
     else if ( keys.d )//d면 오른쪽 회전
       mesh_ship.rotateY(-0.02);
+    else if ( keys.w )//d면 오른쪽 회전
+      mesh_ship.rotateX(0.02);
+    else if ( keys.s )//d면 오른쪽 회전
+      mesh_ship.rotateX(-0.02);
       
     //////////////////////////////////////////
     //이부분에서 물체 회전 할 때 카메라 회전하는게 조금 부자연스러워서 로직 수정해야함
