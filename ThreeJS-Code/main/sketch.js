@@ -42,12 +42,12 @@ function makeCircle (radius = 30, rotate = 50, minAngle = 5) {
   return vertices
 }
 
-//camera option(global object)
-var camera;
+//camera[0] option(global object)
+var camera = [];
 var projector, mouse = { x: 0, y: 0 };
 var renderer;
 var scene;
-var controls;
+var controls,controls2;
 //value is object distance z(정면에서 보기위해서)
 var value_z = 0;
 //move flag(버튼을 연속으로 못누르게 lock)
@@ -57,6 +57,10 @@ var moveID;
 const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
 const tempV= new THREE.Vector3();
+
+//space_ship button
+var s_flag = true;
+var shipRenderID;
 
 window.onload = function init() 
 { 
@@ -71,14 +75,17 @@ window.onload = function init()
 
   renderer.setClearColor("#121212", 1);
 
-  // CAMERA
-  camera = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 1000);
-  camera.position.set(30, 5, 35);
-
+  // camera[0]
+  camera[0] = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 1000);
+  camera[0].position.set(30, 5, 35);
+  camera[1] = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 1000);
+  
   // ORBIT CONTROLS
-  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls = new THREE.OrbitControls(camera[0], renderer.domElement);
   controls.target.set(30, 0, 0);
-
+  controls2 = new THREE.OrbitControls(camera[1], renderer.domElement);
+  controls2.maxDistance = 10;
+  controls2.minDistance = 10;
   /*
    * TEXTURES
    */
@@ -110,7 +117,7 @@ window.onload = function init()
   const plutoMaterial = new THREE.MeshStandardMaterial({ map: plutoTexture });
 
   const labelContainerElem = document.querySelector('#labels');//-DongMin
-
+  const labelContainerElem2 = document.querySelector('#container2');//-DongMin
 
   //scene
   scene = new THREE.Scene();
@@ -159,7 +166,6 @@ window.onload = function init()
   plants_Mesh = plants_Mesh.concat(mercuryMesh);//-DongMin
 
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(makeCircle(25));
-  console.log(makeCircle())
   const line = new THREE.Line(lineGeometry, lineMaterial);
   scene.add(line);
 
@@ -270,14 +276,14 @@ window.onload = function init()
       plants_Mesh[i].updateWorldMatrix(true,false);
       plants_Mesh[i].getWorldPosition(tempV);
 
-      tempV.project(camera);
+      tempV.project(camera[0]);
       const x = (tempV.x * .5+ .5) * canvas.clientWidth;
       const y = (tempV.y * -.5 + .5) * canvas.clientHeight;
       labelContainerElem.childNodes[i].style.transform = `translate(-50%, -50%) translate(${ x }px,${ y }px)`;
     }
     
     requestAnimationFrame(render);
-    renderer.render(scene, camera);
+    renderer.render(scene, camera[0]);
   }
 
       //controls.dispose();
@@ -313,7 +319,7 @@ window.onload = function init()
 }
 
 
-  //camera button
+  //camera[0] button
   var button_list = [];
   var object_num =0;
   for(var i=0; i < plants_number; i++){
@@ -355,7 +361,6 @@ window.onload = function init()
     labelContainerElem.childNodes[i].id = i;
     labelContainerElem.childNodes[i].onclick = function (event){
       value_z = 5;//value_Z는 정면에서 보기 위한 z축의 값
-      console.log(event);
       object_num = event.path[0].id;
       plants_Mesh[object_num].getWorldPosition(tempV);
       moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,plants_Mesh[object_num]);
@@ -370,31 +375,45 @@ window.onload = function init()
   /*
   * Space Ship
   */
-  var s_flag = true;
   document.getElementById("Button_Space_ship").onclick = function(){
-    space_ship_render(s_flag);
-    s_flag = false;
+    if(s_flag){
+      labelContainerElem.style.display='none';
+      labelContainerElem2.style.display='none';
+      
+      space_ship_render();
+      s_flag = false;
+    }
+    else{
+      labelContainerElem.style.display='';
+      labelContainerElem2.style.display='';
+      scene.remove( mesh_ship );
+      value_z = 0;
+      moveCam(0, 30, 0,0,0,0,0);
+      s_flag = true;
+    }
+
   };
 
 
 };
 
 
-//camera moving -DongMin
+//camera[0] moving -DongMin
 function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 {   
   window.cancelAnimationFrame(moveID);
+  window.cancelAnimationFrame(shipRenderID);
   if(flag == 1)
-  return;
+    return;
   //button lock
   flag = 1;
 
   var loading_num = 20;
 
   //move eye changeed value(변화량)
-  var m_e_x = (eye_x - camera.position.x)/loading_num;
-  var m_e_y = (eye_y - camera.position.y)/loading_num;
-  var m_e_z = (eye_z - camera.position.z + value_z)/loading_num;
+  var m_e_x = (eye_x - camera[0].position.x)/loading_num;
+  var m_e_y = (eye_y - camera[0].position.y)/loading_num;
+  var m_e_z = (eye_z - camera[0].position.z + value_z)/loading_num;
   //move target changeed value(변화량)
   var m_t_x = (target_x - controls.target.x)/loading_num;
   var m_t_y = (target_y - controls.target.y)/loading_num;
@@ -403,10 +422,10 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
   // console.log(m_e_x,m_e_y,m_e_z);
   // console.log(m_t_x,m_t_y,m_t_z);
 
-  //camera position
-  var c_x = camera.position.x;
-  var c_y = camera.position.y;
-  var c_z = camera.position.z;
+  //camera[0] position
+  var c_x = camera[0].position.x;
+  var c_y = camera[0].position.y;
+  var c_z = camera[0].position.z;
 
   //target position
   var t_x = controls.target.x;
@@ -416,9 +435,9 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 
   function move_view(){
     i++;
-    camera.position.set ( c_x + i*m_e_x, c_y + i*m_e_y, c_z + i*m_e_z  );
+    camera[0].position.set ( c_x + i*m_e_x, c_y + i*m_e_y, c_z + i*m_e_z  );
     controls.target.set( t_x + i*m_t_x, t_y + i*m_t_y, t_z + i*m_t_z);
-    renderer.render(scene,camera);
+    renderer.render(scene,camera[0]);
     controls.update();
     if(i != loading_num)
       moveID=window.requestAnimationFrame(move_view);
@@ -426,9 +445,9 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
       window.cancelAnimationFrame(moveID);
     function move_object(){
       Mesh.getWorldPosition(tempV);
-      camera.position.set(tempV.x,tempV.y,tempV.z + value_z);
+      camera[0].position.set(tempV.x,tempV.y,tempV.z + value_z);
       controls.target.set(tempV.x,tempV.y,tempV.z);
-      renderer.render(scene,camera);
+      renderer.render(scene,camera[0]);
       controls.update();
       moveID=window.requestAnimationFrame(move_object);
     }
@@ -444,10 +463,13 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 /*
 * Spcae ship
 */
-function space_ship_render(s_flag){
-  window.cancelAnimationFrame(moveID);
+var mesh_ship;
 
-  var goal,follow,mesh,keys;
+function space_ship_render(){
+  window.cancelAnimationFrame(moveID);
+  window.cancelAnimationFrame(shipRenderID);
+
+  var follow,keys;
   var coronaSafetyDistance = 0.3;
   var velocity = 0.0;
   var speed = 0.0;
@@ -461,85 +483,84 @@ function space_ship_render(s_flag){
   var geometry = new THREE.BoxBufferGeometry( 1, 1, 1 );// 테스트용 큐브 object
   var material = new THREE.MeshNormalMaterial();
 
-  if(s_flag)
-  {
-    mesh = new THREE.Mesh( geometry, material );
-    mesh.position.set(2,2,2);
+  mesh_ship = new THREE.Mesh( geometry, material );
+  mesh_ship.position.set(2,2,2);
+    
+  //goal_ship = new THREE.Object3D;
+  follow = new THREE.Object3D;
+  follow.position.z = -coronaSafetyDistance;
+  mesh_ship.add( follow );
+  
+  //goal_ship.add( camera[1] );
+  scene.add( mesh_ship );
+
+    keys = {//방향키 초기화
+      a: false,
+      s: false,
+      d: false,
+      w: false
+    };
+    
+    document.body.addEventListener( 'keydown', function(e) {
       
-    goal = new THREE.Object3D;
-    follow = new THREE.Object3D;
-    follow.position.z = -coronaSafetyDistance;
-    mesh.add( follow );
+      const key = e.code.replace('Key', '').toLowerCase();
+      if ( keys[ key ] !== undefined )
+        keys[ key ] = true;
+      
+    });
+    document.body.addEventListener( 'keyup', function(e) {
+      
+      const key = e.code.replace('Key', '').toLowerCase();
+      if ( keys[ key ] !== undefined )
+        keys[ key ] = false;
+      
+    });
+    value_z = 5;
+    camera[1].position.set( mesh_ship.position.x,mesh_ship.position.y,mesh_ship.position.z + value_z);
+   animate_spaceship();
+  
+
+  function animate_spaceship() {
+
+    // controls.update();
+
+    shipRenderID = requestAnimationFrame( animate_spaceship );
+      
+    speed = 0.0;
     
-    goal.add( camera );
-    scene.add( mesh );
+    if ( keys.w )//w면 앞으로
+      speed = 0.1;
+    else if ( keys.s )//s면 뒤로
+      speed = -0.1;
+
+    velocity += ( speed - velocity ) * .3;
+    mesh_ship.translateZ( velocity );
+
+    if ( keys.a ){//a면 왼쪽 회전
+      mesh_ship.rotateY(0.02);
+      
+    }
+    else if ( keys.d )//d면 오른쪽 회전
+      mesh_ship.rotateY(-0.02);
+      
+    //////////////////////////////////////////
+    //이부분에서 물체 회전 할 때 카메라 회전하는게 조금 부자연스러워서 로직 수정해야함
+    a.lerp(mesh_ship.position, 0.4);
+    //b.copy(goal_ship.position);//goal == camera[0]
+    
+      dir.copy( a ).sub( b ).normalize();
+      const dis = a.distanceTo( b ) - coronaSafetyDistance;
+      // goal_ship.position.addScaledVector( dir, dis );
+      // goal_ship.position.lerp(temp, 0.1);
+      temp.setFromMatrixPosition(follow.matrixWorld);
+      
+      //camera[1].position.set( mesh_ship.position.x,mesh_ship.position.y,mesh_ship.position.z + value_z);
+      
+      camera[1].lookAt( mesh_ship.position );
+      controls2.target.set(mesh_ship.position.x,mesh_ship.position.y,mesh_ship.position.z);
+      renderer.render( scene, camera[1] );
+      controls2.update();
+      ///////////////////////
+
   }
-
-
-  keys = {//방향키 초기화
-    a: false,
-    s: false,
-    d: false,
-    w: false
-  };
-  
-  document.body.addEventListener( 'keydown', function(e) {
-    
-    const key = e.code.replace('Key', '').toLowerCase();
-    if ( keys[ key ] !== undefined )
-      keys[ key ] = true;
-    
-  });
-  document.body.addEventListener( 'keyup', function(e) {
-    
-    const key = e.code.replace('Key', '').toLowerCase();
-    if ( keys[ key ] !== undefined )
-      keys[ key ] = false;
-    
-  });
-
-  animate_spaceship();
-
-function animate_spaceship() {
-
-  // controls.update();
-
-  requestAnimationFrame( animate_spaceship );
-    
-  speed = 0.0;
-  
-  if ( keys.w )//w면 앞으로
-    speed = 0.1;
-  else if ( keys.s )//s면 뒤로
-    speed = -0.1;
-
-  velocity += ( speed - velocity ) * .3;
-  mesh.translateZ( velocity );
-
-  if ( keys.a ){//a면 왼쪽 회전
-    mesh.rotateY(0.02);
-    
-  }
-  else if ( keys.d )//d면 오른쪽 회전
-    mesh.rotateY(-0.02);
-    
-  //////////////////////////////////////////
-  //이부분에서 물체 회전 할 때 카메라 회전하는게 조금 부자연스러워서 로직 수정해야함
-  a.lerp(mesh.position, 0.4);
-  b.copy(goal.position);//goal == camera
-  
-    dir.copy( a ).sub( b ).normalize();
-    const dis = a.distanceTo( b ) - coronaSafetyDistance;
-    goal.position.addScaledVector( dir, dis );
-    goal.position.lerp(temp, 0.1);
-    temp.setFromMatrixPosition(follow.matrixWorld);
-    
-    camera.lookAt( mesh.position );
-    controls.target.set(mesh.position.x,mesh.position.y,mesh.position.z);
-    
-    renderer.render( scene, camera );
-    controls.update();
-    ///////////////////////
-
-}
 }
