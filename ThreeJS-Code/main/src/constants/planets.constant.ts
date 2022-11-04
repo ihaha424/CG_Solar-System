@@ -1,6 +1,16 @@
-import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR } from './index.js';
+/*
+ * orbit: {
+ *     base => base orbit data
+ *     cy => orbit data by century
+ * }
+ */
+import { StarData,PlanetData } from '../lib/interfaces/astro.interface';
+import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR } from '../constants';
+import { Color } from '../../js/three.js';
 
-export const SUN = {
+const TEX_DIR = 'static/images/surface/';
+
+export const SUN: StarData = {
     id: 'sun',
     name: 'The Sun',
     mass: 1.9891e30,
@@ -26,12 +36,13 @@ export const SUN = {
         }
     },
     material: {
-        //emissive: new Color(0xdddd33),
+        emissive: new Color(0xdddd33),
         color: '#ffff00',
+        map: `${TEX_DIR}sun.jpg`
     }
 };
 
-export const MERCURY = {
+export const MERCURY: PlanetData = {
     id: 'mercury',
     name: 'Mercury',
     mass: 3.3022e23,
@@ -57,10 +68,11 @@ export const MERCURY = {
     },
     material: {
         color: '#588a7b',
+        map: `${TEX_DIR}mercury.jpg`
     }
 };
 
-export const VENUS = {
+export const VENUS: PlanetData = {
     id: 'venus',
     name: 'Venus',
     mass: 4.868e24,
@@ -87,10 +99,11 @@ export const VENUS = {
     },
     material: {
         color: '#fda700',
+        map: `${TEX_DIR}venus.jpg`
     }
 };
 
-export const EARTH = {
+export const EARTH: PlanetData = {
     id: 'earth',
     name: 'The Earth',
     mass: 5.9736e24,
@@ -141,10 +154,11 @@ export const EARTH = {
     },
     material: {
         color: '#1f7cda',
+        map: `${TEX_DIR}earth.jpg`
     }
 };
 
-export const MARS = {
+export const MARS: PlanetData = {
     id: 'mars',
     name: 'Mars',
     mass: 6.4185e23,
@@ -195,10 +209,11 @@ export const MARS = {
     },
     material: {
         color: '#ff3300',
+        map: `${TEX_DIR}mars.jpg`
     }
 };
 
-export const JUPITER = {
+export const JUPITER: PlanetData = {
     id: 'jupiter',
     name: 'Jupiter',
     mass: 1.8986e27,
@@ -225,10 +240,11 @@ export const JUPITER = {
     },
     material: {
         color: '#ff9932',
+        map: `${TEX_DIR}jupiter.jpg`
     }
 };
 
-export const SATURN = {
+export const SATURN: PlanetData = {
     id: 'saturn',
     name: 'Saturn',
     mass: 5.6846e26,
@@ -238,6 +254,7 @@ export const SATURN = {
     ring: {
         innerRadius: 74500,
         outerRadius: 117580,
+        map: `${TEX_DIR}saturn-ring.png`
     },
     orbit: {
         base: {
@@ -259,10 +276,11 @@ export const SATURN = {
     },
     material: {
         color: '#ffcc99',
+        map: `${TEX_DIR}saturn.jpg`
     }
 };
 
-export const URANUS = {
+export const URANUS: PlanetData = {
     id: 'uranus',
     name: 'Uranus',
     mass: 8.6810e25,
@@ -289,10 +307,11 @@ export const URANUS = {
     },
     material: {
         color: '#99ccff',
+        map: `${TEX_DIR}uranus.jpg`
     }
 };
 
-export const NEPTUNE = {
+export const NEPTUNE: PlanetData = {
     id: 'Neptune',
     name: 'neptune',
     mass: 1.0243e26,
@@ -319,10 +338,11 @@ export const NEPTUNE = {
     },
     material: {
         color: '#3299ff',
+        map: `${TEX_DIR}neptune.jpg`
     }
 };
 
-export const PLUTO = {
+export const PLUTO: PlanetData = {
     id: 'pluto',
     name: 'Pluto',
     mass: 1.305e22 + 1.52e21,
@@ -349,6 +369,6 @@ export const PLUTO = {
     },
     material: {
         color: '#aaaaaa',
+        map: `${TEX_DIR}pluto.jpg`
     }
 };
-export const length = 9;

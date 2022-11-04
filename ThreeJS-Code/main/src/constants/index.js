@@ -1,5 +1,6 @@
 export const G = 6.6742e-11;
 export const AU = 149597870; // astronomical unit in km
+export const AU_NOMALIZE = 1495.97870;
 export const CIRCLE = 2 * Math.PI;
 export const QUARTER_CIRCLE = Math.PI / 2;
 export const KM = 1000;

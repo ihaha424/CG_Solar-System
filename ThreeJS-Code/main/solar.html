@@ -1,20 +1,32 @@
-
 <html>
-    <head>
-      <title>Solar System</title>
-      <style>
-         body { margin: 0; }
-         #gl-canvas { width: 100%; height: 100% }
-         #container {
-         position: relative;  /* 자식이 이 요소를 기준 삼도록 합니다. */
+
+<head>
+   <title>Solar System</title>
+   <style>
+      body {
+         margin: 0;
+      }
+
+      #gl-canvas {
+         width: 100%;
+         height: 100%
+      }
+
+      #container {
+         position: relative;
+         /* 자식이 이 요소를 기준 삼도록 합니다. */
          width: 100%;
          height: 100%;
          overflow: hidden;
-         }
-         #labels {
-         position: absolute;  /* 캔버스 위에 자리잡도록 합니다. */
-         left: 0;             /* id=container 위 왼쪽에 기준하도록 합니다. */
+      }
+
+      #labels {
+         position: absolute;
+         /* 캔버스 위에 자리잡도록 합니다. */
+         left: 0;
+         /* id=container 위 왼쪽에 기준하도록 합니다. */
          top: 0;
+         color: white;
          }
          .Button
          {
@@ -23,7 +35,7 @@
             height:20px;
             border:1px solid white;
             cursor:pointer;
-            background-color:rgba(101,77,165,0.7);
+            background-color:rgba(100,77,165,0.7);
             padding:5px;
             text-align:center;
             color:white;
@@ -79,38 +91,89 @@
       </style>
 
 
-
+   <link href="css/mobiscroll.javascript.min.css" rel="stylesheet" />
+   <script src="js/mobiscroll.javascript.min.js"></script>
    <link rel="stylesheet" type="text/css" href="tp.css">
+</head>
 
-   </head>
-
-<script type="module" src="js/three.min.js"></script>
-<script type="module" src="js/GLTFLoader.js"></script>      
+<script type="module" src="js/three.js"></script>
+<script type="module" src="js/GLTFLoader.js"></script>
 <script type="module" src="js/OrbitControls.js"></script>
 <script type="module" src="sketch.js"></script>
+
 <body>
 
-<div id="container">
-   <canvas id="gl-canvas" width="1920" height="1080">
-   Oops ... your browser doesn't support the HTML5 canvas element
-   </canvas>
-   <button id = "labels"></button>
-</div>
-<div id="container2">
-   <div id=Button0 class="Button">SUN</div>
-   <div id=Button1 class="Button">MERCURY</div>
-   <div id=Button2 class="Button">VENUS</div>
-   <div id=Button3 class="Button">EARTH</div>
-   <div id=Button4 class="Button">MARS</div>
-   <div id=Button5 class="Button">JUPITER</div>
-   <div id=Button6 class="Button">SATURN</div>
-   <div id=Button7 class="Button">URANUS</div>
-   <div id=Button8 class="Button">NEPTUNE</div>
-   <div id=Button9 class="Button">PLUTO</div>
-   <div id=Button_Init class="Button">Init</div>
-</div>
-<div id=Button_Space_ship class="Button">Space Ship!</div>
+   <div id="container">
+      <canvas id="gl-canvas" width="1920" height="1080">
+         Oops ... your browser doesn't support the HTML5 canvas element
+      </canvas>
+      <button id="labels"></button>
+   </div>
+   <div id="container2">
+      <div id=Button0 class="Button">SUN</div>
+      <div id=Button1 class="Button">MERCURY</div>
+      <div id=Button2 class="Button">VENUS</div>
+      <div id=Button3 class="Button">EARTH</div>
+      <div id=Button4 class="Button">MARS</div>
+      <div id=Button5 class="Button">JUPITER</div>
+      <div id=Button6 class="Button">SATURN</div>
+      <div id=Button7 class="Button">URANUS</div>
+      <div id=Button8 class="Button">NEPTUNE</div>
+      <div id=Button9 class="Button">PLUTO</div>
+      <div id=Button_Init class="Button">Init</div>
 
 
+   </div>
+   <div id=Button_Space_ship class="Button">Space Ship!</div>
+
+
+   <div id = Button_time class="Button">
+      <div class="mbsc-form-group">
+         <div class="mbsc-row">
+            <div class="mbsc-col-8">
+               <input id="demo-mobile-picker-button" class="md-mobile-picker-input" />
+            </div>
+            <div class="mbsc-col-4">
+               <button mbsc-button data-variant="outline" data-color="primary" id="show-mobile-date-picker"
+                  class="md-mobile-picker-button">
+                  Show picker
+               </button>
+            </div>
+         </div>
+      </div>
+   </div>
+   <script>
+      mobiscroll.setOptions({
+         locale: mobiscroll.localeKo,  // Specify language like: locale: mobiscroll.localePl or omit setting to use default
+         theme: 'ios',                 // Specify theme like: theme: 'ios' or omit setting to use default
+         themeVariant: 'light'         // More info about themeVariant: https://docs.mobiscroll.com/5-19-2/javascript/calendar#opt-themeVariant
+      });
+
+      mobiscroll.datepicker('#demo-mobile-picker-input', {
+         controls: ['calendar']        // More info about controls: https://docs.mobiscroll.com/5-19-2/javascript/calendar#opt-controls
+      });
+
+      var instance = mobiscroll.datepicker('#demo-mobile-picker-button', {
+         controls: ['calendar'],       // More info about controls: https://docs.mobiscroll.com/5-19-2/javascript/calendar#opt-controls
+         showOnClick: false,           // More info about showOnClick: https://docs.mobiscroll.com/5-19-2/javascript/calendar#opt-showOnClick
+         showOnFocus: false,           // More info about showOnFocus: https://docs.mobiscroll.com/5-19-2/javascript/calendar#opt-showOnFocus
+      });
+
+      instance.setVal(new Date(), true);
+
+
+      mobiscroll.datepicker('#demo-mobile-picker-inline', {
+         controls: ['calendar'],       // More info about controls: https://docs.mobiscroll.com/5-19-2/javascript/calendar#opt-controls
+         display: 'inline'             // Specify display mode like: display: 'bottom' or omit setting to use default
+      });
+
+      document
+         .getElementById('show-mobile-date-picker')
+         .addEventListener('click', function () {
+            instance.open();
+            return false;
+         });
+   </script>
 </body>
-</html>  
+
+</html>
