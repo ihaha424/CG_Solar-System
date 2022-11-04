@@ -67,10 +67,10 @@ var spotlight2
 var s_flag = true;
 var shipRenderID;
 window.onload = function init() {
-  const realSunSize = Planet.SUN.radius;
-  console.log(realSunSize);
-  const realMercurySize = Planet.MERCURY.radius;
-  console.log(realMercurySize);
+  //const realSunSize = Planet.SUN.radius;
+  //console.log(realSunSize);
+  //const realMercurySize = Planet.MERCURY.radius;
+  //console.log(realMercurySize);
   //const p = SUN.radius;
   time = new Date();
   var canvas = document.getElementById("gl-canvas");
@@ -214,8 +214,8 @@ window.onload = function init() {
 
   const sunMesh = new THREE.Mesh(geometry, sunMaterial);
   sunMesh.position.set(0, 0, 0);
-  const sunSize = Planet.SUN.radius/Index.AU;
-  sunMesh.scale.setScalar(Planet.SUN.radius/Index.AU*10000);
+  const sunSize = Planet.SUN.radius / Index.AU;
+  sunMesh.scale.setScalar(sunSize);
   scene.add(sunMesh);
   const elem = document.createElement('button');//-DongMin
   elem.textContent = "SUN";//-DongMin
@@ -226,7 +226,7 @@ window.onload = function init() {
 
   const mercuryGroup = new THREE.Group();
   const mercuryMesh = new THREE.Mesh(geometry, mercuryMaterial);
-  createPlanet(scene, mercuryMesh, mercuryGroup, 25, Planet.MERCURY.radius / Index.AU * 10000, "MERCURY");//-DongMin
+  createPlanet(scene, mercuryMesh, mercuryGroup, 25, Planet.MERCURY.radius / Planet.SUN.radius * sunSize, "MERCURY");//-DongMin
   plants_Mesh = plants_Mesh.concat(mercuryMesh);//-DongMin
 
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(makeCircle(25));
@@ -235,42 +235,42 @@ window.onload = function init() {
 
   const venusGroup = new THREE.Group();
   const venusMesh = new THREE.Mesh(geometry, venusMaterial);
-  createPlanet(scene, venusMesh, venusGroup, 28, 0.9, "VENUS");//-DongMin
+  createPlanet(scene, venusMesh, venusGroup, 28, Planet.VENUS.radius / Planet.SUN.radius * sunSize, "VENUS");//-DongMin
   plants_Mesh = plants_Mesh.concat(venusMesh);//-DongMin
 
   const earthGroup = new THREE.Group();
   const earthMesh = new THREE.Mesh(geometry, earthMaterial);
-  createPlanet(scene, earthMesh, earthGroup, 31, 1, "EARTH");//-DongMin
+  createPlanet(scene, earthMesh, earthGroup, 31, Planet.EARTH.radius / Planet.SUN.radius * sunSize, "EARTH");//-DongMin
   plants_Mesh = plants_Mesh.concat(earthMesh);//-DongMin
 
   const marsGroup = new THREE.Group();
   const marsMesh = new THREE.Mesh(geometry, marsMaterial);
-  createPlanet(scene, marsMesh, marsGroup, 34, 0.8, "MARS");//-DongMin
+  createPlanet(scene, marsMesh, marsGroup, 34, Planet.MARS.radius / Planet.SUN.radius * sunSize, "MARS");//-DongMin
   plants_Mesh = plants_Mesh.concat(marsMesh);//-DongMin
 
   const jupiterGroup = new THREE.Group();
   const jupiterMesh = new THREE.Mesh(geometry, jupiterMaterial);
-  createPlanet(scene, jupiterMesh, jupiterGroup, 42, 3.5, "JUPITER");//-DongMin
+  createPlanet(scene, jupiterMesh, jupiterGroup, 42, Planet.JUPITER.radius / Planet.SUN.radius * sunSize, "JUPITER");//-DongMin
   plants_Mesh = plants_Mesh.concat(jupiterMesh);//-DongMin
 
   const saturnGroup = new THREE.Group();
   const saturnMesh = new THREE.Mesh(geometry, saturnMaterial);
-  createPlanet(scene, saturnMesh, saturnGroup, 50, 2.9, "SATURN");//-DongMin
+  createPlanet(scene, saturnMesh, saturnGroup, 50, Planet.SATURN.radius / Planet.SUN.radius * sunSize, "SATURN");//-DongMin
   plants_Mesh = plants_Mesh.concat(saturnMesh);//-DongMin
 
   const uranusGroup = new THREE.Group();
   const uranusMesh = new THREE.Mesh(geometry, uranusMaterial);
-  createPlanet(scene, uranusMesh, uranusGroup, 56, 1.7, "URANUS");//-DongMin
+  createPlanet(scene, uranusMesh, uranusGroup, 56, Planet.MERCURY.radius / Planet.URANUS.radius * sunSize, "URANUS");//-DongMin
   plants_Mesh = plants_Mesh.concat(uranusMesh);//-DongMin
 
   const neptuneGroup = new THREE.Group();
   const neptuneMesh = new THREE.Mesh(geometry, neptuneMaterial);
-  createPlanet(scene, neptuneMesh, neptuneGroup, 60, 1.65, "NEPTUNE");//-DongMin
+  createPlanet(scene, neptuneMesh, neptuneGroup, 60, Planet.NEPTUNE.radius / Planet.SUN.radius * sunSize, "NEPTUNE");//-DongMin
   plants_Mesh = plants_Mesh.concat(neptuneMesh);//-DongMin
 
   const plutoGroup = new THREE.Group();
   const plutoMesh = new THREE.Mesh(geometry, plutoMaterial);
-  createPlanet(scene, plutoMesh, plutoGroup, 64, 0.5, "PLUTO");//-DongMin
+  createPlanet(scene, plutoMesh, plutoGroup, 64, Planet.PLUTO.radius / Planet.SUN.radius * sunSize, "PLUTO");//-DongMin
   plants_Mesh = plants_Mesh.concat(plutoMesh);//-DongMin
 
 
@@ -356,47 +356,47 @@ var computed;
     sunMesh.rotation.y = movement * 0.05
 
     //mercuryGroup.rotation.y = movement * 0.5;
-    computed = CalculateOrbit.cal_orbit('MERCURY');
+    computed = CalculateOrbit.cal_orbit('MERCURY',1000);
     mercuryGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     mercuryMesh.rotation.y = movement * 0.20;
 
     //console.log(computed.pos.x/Index.AU,computed.pos.y/Index.AU)
-    computed = CalculateOrbit.cal_orbit('VENUS');
+    computed = CalculateOrbit.cal_orbit('VENUS', 1000);
     venusGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //venusGroup.rotation.y = movement * 0.35;
     venusMesh.rotation.y = movement * 0.18;
 
-    computed = CalculateOrbit.cal_orbit('EARTH');
+    computed = CalculateOrbit.cal_orbit('EARTH', 1000);
     earthGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //earthGroup.rotation.y = movement * 0.3;
     earthMesh.rotation.y = movement * 0.15;
 
-    computed = CalculateOrbit.cal_orbit('MARS');
+    computed = CalculateOrbit.cal_orbit('MARS', 1000);
     marsGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //marsGroup.rotation.y = movement * 0.2;
     marsMesh.rotation.y = movement * 0.2;
 
-    computed = CalculateOrbit.cal_orbit('JUPITER');
+    computed = CalculateOrbit.cal_orbit('JUPITER', 1000);
     jupiterGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //jupiterGroup.rotation.y = movement * 0.05;
     jupiterMesh.rotation.y = movement * 0.05;
 
-    computed = CalculateOrbit.cal_orbit('SATURN');
+    computed = CalculateOrbit.cal_orbit('SATURN', 1000);
     saturnGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //saturnGroup.rotation.y = movement * 0.03;
     saturnMesh.rotation.y = movement * 0.25;
 
-    computed = CalculateOrbit.cal_orbit('URANUS');
+    computed = CalculateOrbit.cal_orbit('URANUS', 1000);
     uranusGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //uranusGroup.rotation.y = movement * 0.02;
     uranusMesh.rotation.y = movement * 0.25;
 
-    computed = CalculateOrbit.cal_orbit('NEPTUNE');
+    computed = CalculateOrbit.cal_orbit('NEPTUNE', 1000);
     neptuneGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //neptuneGroup.rotation.y = movement * 0.015;
     neptuneMesh.rotation.y = movement * 0.25;
 
-    computed = CalculateOrbit.cal_orbit('PLUTO');
+    computed = CalculateOrbit.cal_orbit('PLUTO', 1000);
     plutoGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //plutoGroup.rotation.y = movement * 0.005;
     plutoMesh.rotation.y = movement * 0.2;
@@ -460,7 +460,8 @@ var computed;
     mesh.position.set(x, 0, 0);
     console.log(scale);
     mesh.scale.setScalar(scale);
-    mesh.userData = scale * 2;
+    console.log(scale);
+    mesh.userData = scale * 3;
     group.add(mesh);
     scene.add(group);
   }
@@ -533,7 +534,7 @@ var computed;
 
   document.getElementById("Button_Init").onclick = function () {
     value_z = 0;
-    controls.maxDistance = 1000;
+    controls.maxDistance = 1000000;
     controls.minDistance = 30;
     moveCam(0, 30, 0,0,0,0,0);
   };

@@ -1,8 +1,9 @@
 import * as Planet from './src/constants/planets.js';
 import * as Index from './src/constants/index.js';
-export function cal_orbit(planetName){
+export function cal_orbit(planetName,timeScale){
+
   let today = new Date();
-  let epochTime = (today - Index.J2000)/1000; // 현재 시간(단위 : 초)
+  let epochTime = (today - Index.J2000)/1000 * timeScale; // 현재 시간(단위 : 초)
   let tDays = epochTime / Index.DAY; // 일수
 
   let T = tDays / Index.CENTURY; // 지난 세기
@@ -104,6 +105,8 @@ function getEccentricity(callback, x0, maxCount) {
 
   computed.r /= (1000*Index.AU);
   computed.v *= Index.RAD_TO_DEG;
+  computed.pos.x *= 2;
+  computed.pos.y *= 2;
   //console.log(computed.v);
   return computed;
 }
