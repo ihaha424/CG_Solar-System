@@ -84,7 +84,7 @@ window.onload = function init() {
 
   // camera[0]
   camera[0] = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 100000);
-  camera[0].position.set(30, 5, 35);
+  camera[0].position.set(0, 5000, 0);
   camera[1] = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 100000);
   const cameraToPoint = new THREE.Vector3();
   const cameraPosition = new THREE.Vector3();
@@ -216,12 +216,12 @@ window.onload = function init() {
   sunMesh.position.set(0, 0, 0);
   const sunSize = Planet.SUN.radius / Index.AU;
   sunMesh.scale.setScalar(sunSize);
+  sunMesh.userData = sunSize * 3;
   scene.add(sunMesh);
   const elem = document.createElement('button');//-DongMin
   elem.textContent = "SUN";//-DongMin
   elem.name = "SUN";
   labelContainerElem.appendChild(elem);//-DongMin
-  sunMesh.userData = 20;
   plants_Mesh = plants_Mesh.concat(sunMesh);//-DongMin
 
   const mercuryGroup = new THREE.Group();
@@ -536,7 +536,7 @@ var computed;
     value_z = 0;
     controls.maxDistance = 1000000;
     controls.minDistance = 30;
-    moveCam(0, 30, 0,0,0,0,0);
+    moveCam(0, 5000, 0,0,0,0,0);
   };
 
   /*
@@ -557,7 +557,7 @@ var computed;
       spotlight2.value = 3;
       controls.maxDistance = 1000;
       controls.minDistance = 5;
-      moveCam(0, 30, 0,0,0,0,0);
+      moveCam(0, 5000, 0,0,0,0,0);
       s_flag = true;
     }
 
@@ -573,6 +573,7 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
   if(flag == 1){
     return;
   }
+  console.log(Mesh);
   //button lock
   flag = 1;
   window.cancelAnimationFrame(moveID);
