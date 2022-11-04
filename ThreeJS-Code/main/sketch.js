@@ -411,21 +411,21 @@ var computed;
       plants_Mesh[i].updateWorldMatrix(true,false);
       plants_Mesh[i].getWorldPosition(plants_position);
       
-      tempV.copy(plants_position);
-      tempV.applyMatrix3(normalMatrix);
+      // tempV.copy(plants_position);
+      // tempV.applyMatrix3(normalMatrix);
  
-      // 카메라로부터 이 위치까지의 거리를 계산합니다.
-      cameraToPoint.copy(plants_position);
-      cameraToPoint.applyMatrix4(camera[0].matrixWorldInverse).normalize();
+      // // 카메라로부터 이 위치까지의 거리를 계산합니다.
+      // cameraToPoint.copy(plants_position);
+      // cameraToPoint.applyMatrix4(camera[0].matrixWorldInverse).normalize();
       
-      const dot = tempV.dot(cameraToPoint);
+      // const dot = tempV.dot(cameraToPoint);
  
-      // 카메라를 바라보지 않는다면 이름표를 숨깁니다.
-      if (dot < minVisibleDot) {
-        labelContainerElem.childNodes[i].style.display = 'none';
-        continue;
-      }
-      labelContainerElem.childNodes[i].style.display = '';
+      // // 카메라를 바라보지 않는다면 이름표를 숨깁니다.
+      // if (dot < minVisibleDot) {
+      //   labelContainerElem.childNodes[i].style.display = 'none';
+      //   continue;
+      // }
+      // labelContainerElem.childNodes[i].style.display = '';
  
       tempV.copy(plants_position);
       tempV.project(camera[0]);
@@ -436,7 +436,7 @@ var computed;
       }
       labelContainerElem.childNodes[i].style.display = '';
       const x = (tempV.x * .5+ .5) * canvas.clientWidth;
-      const y = (tempV.y * -.5 + .5) * canvas.clientHeight - 50;
+      const y = (tempV.y * -.5 + .5) * canvas.clientHeight - 50+i*10;
       labelContainerElem.childNodes[i].style.transform = `translate(-50%, -50%) translate(${ x }px,${ y }px)`;
     
     }
