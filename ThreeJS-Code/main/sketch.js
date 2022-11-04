@@ -60,6 +60,7 @@ const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
 const tempV= new THREE.Vector3();
 const plants_position= new THREE.Vector3();
+var plants_Mesh;
 //button spotlight
 var spotlight2
 
@@ -92,8 +93,8 @@ window.onload = function init()
   controls = new THREE.OrbitControls(camera[0], renderer.domElement);
   controls.target.set(30, 0, 0);
   controls2 = new THREE.OrbitControls(camera[1], renderer.domElement);
-  controls2.maxDistance = 10;
-  controls2.minDistance = 10;
+  controls2.maxDistance = 50;
+  controls2.minDistance = 50;
 
   //picking
   class PickHelper {
@@ -208,7 +209,7 @@ window.onload = function init()
 
   //plants number
   var plants_number = 10;//-DongMin
-  var plants_Mesh = [];//-DongMin
+  plants_Mesh = [];//-DongMin
 
   const sunMesh = new THREE.Mesh(geometry, sunMaterial);
   sunMesh.position.set(0, 0, 0);
@@ -623,9 +624,16 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 /*
 * Spcae ship
 */
-var mesh_ship;
+var mesh_ship = new THREE.Mesh();
 var speed = 0.0;
-
+var gltfloader = new THREE.GLTFLoader();
+  gltfloader.load('assets/spaceship.gltf', function( gltf) {
+    mesh_ship = gltf.scene.children[0];      
+    //spaceship.scene.position.set(tempEarth.x,tempEarth.y + 2,tempEarth.z);
+    // spaceship.scene.scale.set(0.01, 0.01, 0.01);
+    // spaceship.scene = gltf.scene;
+    console.log(scene);
+} );
 function space_ship_render(){
   window.cancelAnimationFrame(moveID);
   window.cancelAnimationFrame(shipRenderID);
@@ -640,19 +648,19 @@ function space_ship_render(){
   var a = new THREE.Vector3;
   var b = new THREE.Vector3;
 
-  var geometry = new THREE.BoxBufferGeometry( 1, 1, 1 );// 테스트용 큐브 object
-  var material = new THREE.MeshNormalMaterial();
+  var tempEarth = new THREE.Vector3();
+  plants_Mesh[3].getWorldPosition(tempEarth);
+  console.log(tempEarth.x,tempEarth.y + 2,tempEarth.z)
 
-  mesh_ship = new THREE.Mesh( geometry, material );
-  mesh_ship.position.set(0,10.5,0);
-    
+  mesh_ship.position.set(tempEarth.x,tempEarth.y + 2,tempEarth.z);
+  scene.add( mesh_ship );
+
   //goal_ship = new THREE.Object3D;
   follow = new THREE.Object3D;
   follow.position.z = -coronaSafetyDistance;
   mesh_ship.add( follow );
   
   //goal_ship.add( camera[1] );
-  scene.add( mesh_ship );
 
     keys = {//방향키 초기화
       a: false,
@@ -700,7 +708,7 @@ function space_ship_render(){
     //   speed = -0.1;
 
     velocity += ( speed - velocity ) * .3;
-    mesh_ship.translateZ( velocity );
+    mesh_ship.translateY( velocity );
 
     if ( keys.a ){//a면 왼쪽 회전
       mesh_ship.rotateY(0.02);
