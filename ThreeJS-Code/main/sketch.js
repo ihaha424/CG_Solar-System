@@ -59,6 +59,7 @@ var moveID;
 const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
 const tempV= new THREE.Vector3();
+const plants_position= new THREE.Vector3();
 //button spotlight
 var spotlight2
 
@@ -83,13 +84,55 @@ window.onload = function init()
   camera[0] = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 1000);
   camera[0].position.set(30, 5, 35);
   camera[1] = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 1000);
-  
+  const cameraToPoint = new THREE.Vector3();
+  const cameraPosition = new THREE.Vector3();
+  const normalMatrix = new THREE.Matrix3();
+
   // ORBIT CONTROLS
   controls = new THREE.OrbitControls(camera[0], renderer.domElement);
   controls.target.set(30, 0, 0);
   controls2 = new THREE.OrbitControls(camera[1], renderer.domElement);
   controls2.maxDistance = 10;
   controls2.minDistance = 10;
+
+  //picking
+  class PickHelper {
+    constructor() {
+      this.raycaster = new THREE.Raycaster();
+      this.pickedObject = null;
+      this.pickedObjectSavedColor = 0;
+      this.flag =true;
+    }
+    pick(normalizedPosition, scene, camera) {
+      // 이미 다른 물체를 피킹했다면 색을 복원합니다
+      if (this.pickedObject) {
+      //   this.pickedObject.material.emissive.setHex(this.pickedObjectSavedColor);
+          this.pickedObject = undefined;
+          this.flag =true;
+       }
+   
+      // 절두체 안에 광선을 쏩니다
+      this.raycaster.setFromCamera(normalizedPosition, camera);
+      // 광선과 교차하는 물체들을 배열로 만듭니다
+      const intersectedObjects = this.raycaster.intersectObjects(scene);
+      if (intersectedObjects.length) {
+        // 첫 번째 물체가 제일 가까우므로 해당 물체를 고릅니다
+        this.pickedObject = intersectedObjects[0].object;
+        if(this.flag==true){
+          this.flag = false;
+          value_z = this.pickedObject.userData;
+          this.pickedObject.getWorldPosition(tempV);
+          moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,this.pickedObject);
+        }
+        // 기존 색을 저장해둡니다
+        //this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
+        // emissive 색을 빨강/노랑으로 빛나게 만듭니다
+        //this.pickedObject.material.emissive.setHex((time * 8) % 2 > 1 ? 0xFFFF00 : 0xFF0000);
+      }
+    }
+  }
+  const pickHelper = new PickHelper();
+
   /*
    * TEXTURES
    */
@@ -226,6 +269,11 @@ window.onload = function init()
   // illuminate the sun
   createSpotlights(scene);
 
+  //button spotlight
+  spotlight2 = new THREE.PointLight( 0xFFFFFF,1);
+  spotlight2.position.set(0,0,0);
+  scene.add(spotlight2);
+
   /*
    * HELPERS
    */
@@ -239,11 +287,43 @@ window.onload = function init()
   var delta = 0;
   var movement = 1;
 
+/*
+//picking
+*/
+const pickPosition = { x: 0, y: 0 };
+clearPickPosition();
 
+function getCanvasRelativePosition(event) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (event.clientX - rect.left) * canvas.width  / rect.width,
+    y: (event.clientY - rect.top ) * canvas.height / rect.height,
+  };
+}
+ 
+function setPickPosition(event) {
+  const pos = getCanvasRelativePosition(event);
+  pickPosition.x = (pos.x / canvas.width ) *  2 - 1;
+  pickPosition.y = (pos.y / canvas.height) * -2 + 1;  // Y 축을 뒤집었음
+}
+ 
+function clearPickPosition() {
+  /**
+   * 마우스의 경우는 항상 위치가 있어 그다지 큰
+   * 상관이 없지만, 터치 같은 경우 사용자가 손가락을
+   * 떼면 피킹을 멈춰야 합니다. 지금은 일단 어떤 것도
+   * 선택할 수 없는 값으로 지정해두었습니다
+   **/
+  pickPosition.x = -100000;
+  pickPosition.y = -100000;
+}
+ 
+window.addEventListener('mousedown', setPickPosition);
+window.addEventListener('mouseup', clearPickPosition);
   // draw each frame
   render();
 var computed;
-  function render(){
+  function render(time){
     
     // var time = clock.getElapsedTime(); 
     // console.log(time);
@@ -298,19 +378,51 @@ var computed;
     //plutoGroup.rotation.y = movement * 0.005;
     plutoMesh.rotation.y = movement * 0.2;
 
-<<<<<<< Updated upstream
+    const minVisibleDot = 0.2;
+    // 카메라의 상대 방향을 나타내는 행렬 좌표를 가져옵니다.
+    normalMatrix.getNormalMatrix(camera[0].matrixWorldInverse);
+    // 카메라의 위치를 가져옵니다.
+    camera[0].getWorldPosition(cameraPosition);
+
     for(var i = 0; i<10; i++){
       plants_Mesh[i].updateWorldMatrix(true,false);
-      plants_Mesh[i].getWorldPosition(tempV);
-
+      plants_Mesh[i].getWorldPosition(plants_position);
+      
+      tempV.copy(plants_position);
+      tempV.applyMatrix3(normalMatrix);
+ 
+      // 카메라로부터 이 위치까지의 거리를 계산합니다.
+      cameraToPoint.copy(plants_position);
+      cameraToPoint.applyMatrix4(camera[0].matrixWorldInverse).normalize();
+      
+      const dot = tempV.dot(cameraToPoint);
+ 
+      // 카메라를 바라보지 않는다면 이름표를 숨깁니다.
+      if (dot < minVisibleDot) {
+        labelContainerElem.childNodes[i].style.display = 'none';
+        continue;
+      }
+      labelContainerElem.childNodes[i].style.display = '';
+ 
+      tempV.copy(plants_position);
       tempV.project(camera[0]);
+      //console.log(i,tempV);
+      if((tempV.x < -1 && tempV.x > 1)||(tempV.y < -1 && tempV.y > 1)){
+        labelContainerElem.childNodes[i].style.display = 'none';  
+        continue;
+      }
+      labelContainerElem.childNodes[i].style.display = '';
       const x = (tempV.x * .5+ .5) * canvas.clientWidth;
-      const y = (tempV.y * -.5 + .5) * canvas.clientHeight;
+      const y = (tempV.y * -.5 + .5) * canvas.clientHeight - 50;
       labelContainerElem.childNodes[i].style.transform = `translate(-50%, -50%) translate(${ x }px,${ y }px)`;
+    
     }
     
-=======
->>>>>>> Stashed changes
+    spotlight2.position.set(camera[0].position.x,camera[0].position.y,camera[0].position.z);
+    time *= 0.001;
+    pickHelper.pick(pickPosition,plants_Mesh,camera[0]);  
+
+
     requestAnimationFrame(render);
     renderer.render(scene, camera[0]);
   }
@@ -324,7 +436,7 @@ var computed;
     labelContainerElem.appendChild(elem);//-DongMin
     mesh.position.set(x, 0, 0);
     mesh.scale.setScalar(scale);
-    mesh.userData = scale * 2;
+    mesh.userData = scale * 2.3;
     group.add(mesh);
     scene.add(group);
   }
@@ -347,10 +459,6 @@ var computed;
     scene.add( spotlight );
   });
 }
-  //button spotlight
-  spotlight2 = new THREE.PointLight( 0xFFFFFF,0.2);
-  spotlight2.position.set(0,0,0);
-  scene.add(spotlight2);
 
   //camera[0] button
   var button_list = [];
@@ -403,7 +511,7 @@ var computed;
   document.getElementById("Button_Init").onclick = function(){
     value_z = 0;
     controls.maxDistance = 1000;
-    controls.minDistance = 5;
+    controls.minDistance = 30;
     moveCam(0, 30, 0,0,0,0,0);
   };
 
@@ -422,6 +530,9 @@ var computed;
       labelContainerElem2.style.display='';
       scene.remove( mesh_ship );
       value_z = 0;
+      spotlight2.value = 3;
+      controls.maxDistance = 1000;
+      controls.minDistance = 5;
       moveCam(0, 30, 0,0,0,0,0);
       s_flag = true;
     }
@@ -435,17 +546,14 @@ var computed;
 //camera[0] moving -DongMin
 function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 {   
-  window.cancelAnimationFrame(moveID);
-  window.cancelAnimationFrame(shipRenderID);
-  spotlight2.position.set(0,0,0);
   if(flag == 1){
     return;
   }
-
   //button lock
   flag = 1;
-
-  var loading_num = 20;
+  window.cancelAnimationFrame(moveID);
+  window.cancelAnimationFrame(shipRenderID);
+  var loading_num = 200;
 
   //move eye changeed value(변화량)
   var m_e_x = (eye_x - camera[0].position.x)/loading_num;
@@ -486,7 +594,6 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
       controls.minDistance = Mesh.userData;
       controls.target.set(tempV.x,tempV.y,tempV.z);
       //클릭시 빛....애매함.
-      spotlight2.position.set(camera[0].position.x,camera[0].position.y,camera[0].position.z);
       renderer.render(scene,camera[0]);
       controls.update();
       moveID=window.requestAnimationFrame(move_object);
@@ -597,7 +704,6 @@ function space_ship_render(){
     a.lerp(mesh_ship.position, 0.4);
     //b.copy(goal_ship.position);//goal == camera[0]
     
-<<<<<<< Updated upstream
       dir.copy( a ).sub( b ).normalize();
       const dis = a.distanceTo( b ) - coronaSafetyDistance;
       // goal_ship.position.addScaledVector( dir, dis );
@@ -608,17 +714,12 @@ function space_ship_render(){
       
       camera[1].lookAt( mesh_ship.position );
       controls2.target.set(mesh_ship.position.x,mesh_ship.position.y,mesh_ship.position.z);
+      spotlight2.value = 3;
+      spotlight2.position.set(camera[1].position.x,camera[1].position.y,camera[1].position.z);
+    
       renderer.render( scene, camera[1] );
       controls2.update();
       ///////////////////////
 
   }
 }
-=======
-    renderer.render( scene, camera );
-    controls.update();
-    ///////////////////////
-}
-}
-
->>>>>>> Stashed changes

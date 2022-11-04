@@ -6,15 +6,20 @@ body { margin: 0 }
     cursor: pointer;     /* 포인터가 위에 올라갔을 때 포인터 스타일을 바꿉니다. */
     font-size: large;
     user-select: none;   /* 텍스트를 선택할 수 없도록 합니다. */
-    text-shadow:         /* 글자에 검은 테두리를 두릅니다. */
-      -1px -1px 0 #000,
-       0   -1px 0 #000,
-       1px -1px 0 #000,
-       1px  0   0 #000,
-       1px  1px 0 #000,
-       0    1px 0 #000,
-      -1px  1px 0 #000,
-      -1px  0   0 #000;
+    color: white;
+    background-color: transparent !important;
+    background-image: none !important;
+    border-color: transparent;
+    border: none;
+/* text-shadow:         /* 글자에 검은 테두리를 두릅니다. 
+      -1px -1px 0 rgb(255, 255, 255),
+       0   -1px 0 rgb(255, 255, 255),
+       1px -1px 0 rgb(255, 255, 255),
+       1px  0   0 rgb(255, 255, 255),
+       1px  1px 0 rgb(255, 255, 255),
+       0    1px 0 rgb(255, 255, 255),
+      -1px  1px 0 rgb(255, 255, 255),
+      -1px  0   0 rgb(255, 255, 255); */
   }
   #labels > button:hover {
     color: red;
