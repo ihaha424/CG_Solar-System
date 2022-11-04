@@ -1,6 +1,8 @@
 import * as Planet from './src/constants/planets.js';
-import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR,KM } from './src/constants/index.js';
-// import {THREE} from './node_modules/three'; <- 이 부분에서 오류 나는 듯
+import * as Index from './src/constants/index.js';
+import * as CalculateOrbit from './cal_orbit.js';
+//import * as OrbitController from './calculation_orbit.js'; 
+//<- 이 부분에서 오류 나는 듯
 const settings = {
   // Make the loop animated
   animate: true,
@@ -216,6 +218,7 @@ window.onload = function init()
   /*
    * LIGHTING
    */
+
   const light = new THREE.PointLight("white", 1.25);
   light.position.set(0, 0, 0);
   scene.add(light);
@@ -239,43 +242,63 @@ window.onload = function init()
 
   // draw each frame
   render();
-
+var computed;
   function render(){
+    
     // var time = clock.getElapsedTime(); 
-
     // console.log(time);
     controls.update();
     movement +=0.1;
 
     sunMesh.rotation.y = movement * 0.05
 
-    mercuryGroup.rotation.y = movement * 0.5;
+    //mercuryGroup.rotation.y = movement * 0.5;
+    computed = CalculateOrbit.cal_orbit('MERCURY');
+    mercuryGroup.position.set(computed.pos.x/Index.AU,0,computed.pos.y/Index.AU);
     mercuryMesh.rotation.y = movement * 0.20;
 
-    venusGroup.rotation.y = movement * 0.35;
+    //console.log(computed.pos.x/Index.AU,computed.pos.y/Index.AU)
+    computed = CalculateOrbit.cal_orbit('VENUS');
+    venusGroup.position.set(computed.pos.x/Index.AU,0,computed.pos.y/Index.AU);
+    //venusGroup.rotation.y = movement * 0.35;
     venusMesh.rotation.y = movement * 0.18;
-
-    earthGroup.rotation.y = movement * 0.3;
+    
+    computed = CalculateOrbit.cal_orbit('EARTH');
+    earthGroup.position.set(computed.pos.x/Index.AU,0,computed.pos.y/Index.AU);
+    //earthGroup.rotation.y = movement * 0.3;
     earthMesh.rotation.y = movement * 0.15;
 
-    marsGroup.rotation.y = movement * 0.2;
+    computed = CalculateOrbit.cal_orbit('MARS');
+    marsGroup.position.set(computed.pos.x/Index.AU,0,computed.pos.y/Index.AU);
+    //marsGroup.rotation.y = movement * 0.2;
     marsMesh.rotation.y = movement * 0.2;
 
-    jupiterGroup.rotation.y = movement * 0.05;
+    computed = CalculateOrbit.cal_orbit('JUPITER');
+    jupiterGroup.position.set(computed.pos.x/Index.AU,0,computed.pos.y/Index.AU);
+    //jupiterGroup.rotation.y = movement * 0.05;
     jupiterMesh.rotation.y = movement * 0.05;
-
-    saturnGroup.rotation.y = movement * 0.03;
+    
+    computed = CalculateOrbit.cal_orbit('SATURN');
+    saturnGroup.position.set(computed.pos.x/Index.AU,0,computed.pos.y/Index.AU);
+    //saturnGroup.rotation.y = movement * 0.03;
     saturnMesh.rotation.y = movement * 0.25;
-
-    uranusGroup.rotation.y = movement * 0.02;
+    
+    computed = CalculateOrbit.cal_orbit('URANUS');
+    uranusGroup.position.set(computed.pos.x/Index.AU,0,computed.pos.y/Index.AU);
+    //uranusGroup.rotation.y = movement * 0.02;
     uranusMesh.rotation.y = movement * 0.25;
 
-    neptuneGroup.rotation.y = movement * 0.015;
+    computed = CalculateOrbit.cal_orbit('NEPTUNE');
+    neptuneGroup.position.set(computed.pos.x/Index.AU,0,computed.pos.y/Index.AU);
+    //neptuneGroup.rotation.y = movement * 0.015;
     neptuneMesh.rotation.y = movement * 0.25;
 
-    plutoGroup.rotation.y = movement * 0.005;
+    computed = CalculateOrbit.cal_orbit('PLUTO');
+    plutoGroup.position.set(computed.pos.x/Index.AU,0,computed.pos.y/Index.AU);
+    //plutoGroup.rotation.y = movement * 0.005;
     plutoMesh.rotation.y = movement * 0.2;
 
+<<<<<<< Updated upstream
     for(var i = 0; i<10; i++){
       plants_Mesh[i].updateWorldMatrix(true,false);
       plants_Mesh[i].getWorldPosition(tempV);
@@ -286,6 +309,8 @@ window.onload = function init()
       labelContainerElem.childNodes[i].style.transform = `translate(-50%, -50%) translate(${ x }px,${ y }px)`;
     }
     
+=======
+>>>>>>> Stashed changes
     requestAnimationFrame(render);
     renderer.render(scene, camera[0]);
   }
@@ -572,6 +597,7 @@ function space_ship_render(){
     a.lerp(mesh_ship.position, 0.4);
     //b.copy(goal_ship.position);//goal == camera[0]
     
+<<<<<<< Updated upstream
       dir.copy( a ).sub( b ).normalize();
       const dis = a.distanceTo( b ) - coronaSafetyDistance;
       // goal_ship.position.addScaledVector( dir, dis );
@@ -588,3 +614,11 @@ function space_ship_render(){
 
   }
 }
+=======
+    renderer.render( scene, camera );
+    controls.update();
+    ///////////////////////
+}
+}
+
+>>>>>>> Stashed changes
