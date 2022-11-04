@@ -351,7 +351,8 @@ var computed;
     // var time = clock.getElapsedTime(); 
     // console.log(time);
     controls.update();
-    movement += 0.1;
+    var rate;
+    movement += 0.01;
 
     sunMesh.rotation.y = movement * 0.05
 

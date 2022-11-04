@@ -2,6 +2,9 @@
 
 <head>
    <title>Solar System</title>
+
+   <link rel="stylesheet" href="css/mobiscroll.javascript.min.css">
+   <script src="js/mobiscroll.javascript.min.js"></script>
    <style>
       body {
          margin: 0;
@@ -27,72 +30,124 @@
          /* id=container 위 왼쪽에 기준하도록 합니다. */
          top: 0;
          color: white;
-         }
-         .Button
-         {
-            position:fixed;
-            width:100px;
-            height:20px;
-            border:1px solid white;
-            cursor:pointer;
-            background-color:rgba(100,77,165,0.7);
-            padding:5px;
-            text-align:center;
-            color:white;
-         }
-            #Button0 { 
-            right: 5%;
-            top: 5%;
-         }
-            #Button1 { 
-            right: 5%;
-            top: 10%;
-         }
-            #Button2 { 
-            right: 5%;
-            top: 15%;
-         }
-            #Button3 { 
-            right: 5%;
-            top: 20%;
-         }
-            #Button4 { 
-            right: 5%;
-            top: 25%;
-         }
-            #Button5 { 
-            right: 5%;
-            top: 30%;
-         }
-            #Button6 { 
-            right: 5%;
-            top: 35%;
-         }
-            #Button7 { 
-            right: 5%;
-            top: 40%;
-         }
-            #Button8 { 
-            right: 5%;
-            top: 45%;
-         }
-            #Button9 { 
-            right: 5%;
-            top: 50%;
-         }
-            #Button_Init{
-                right: 5%;
-               top: 55%;
-            }
-            #Button_Space_ship{
-                right: 5%;
-               top: 60%;
-            }
-      </style>
+      }
+
+      .Button {
+         position: fixed;
+         width: 100px;
+         height: 20px;
+         border: 1px solid white;
+         cursor: pointer;
+         background-color: rgba(100, 77, 165, 0.7);
+         padding: 5px;
+         text-align: center;
+         color: white;
+      }
+
+      #Button0 {
+         right: 5%;
+         top: 5%;
+      }
+
+      #Button1 {
+         right: 5%;
+         top: 10%;
+      }
+
+      #Button2 {
+         right: 5%;
+         top: 15%;
+      }
+
+      #Button3 {
+         right: 5%;
+         top: 20%;
+      }
+
+      #Button4 {
+         right: 5%;
+         top: 25%;
+      }
+
+      #Button5 {
+         right: 5%;
+         top: 30%;
+      }
+
+      #Button6 {
+         right: 5%;
+         top: 35%;
+      }
+
+      #Button7 {
+         right: 5%;
+         top: 40%;
+      }
+
+      #Button8 {
+         right: 5%;
+         top: 45%;
+      }
+
+      #Button9 {
+         right: 5%;
+         top: 50%;
+      }
+
+      #Button_Init {
+         right: 5%;
+         top: 55%;
+      }
+
+      #Button_Space_ship {
+         right: 5%;
+         top: 60%;
+      }
+      #Button_time {
+         right: 5%;
+         top: 65%;
+      }
+
+      .md-mobile-picker-header {
+         font-size: 14px;
+      }
+
+      input.md-mobile-picker-input {
+         color: initial;
+         width: 100%;
+         padding: 10px;
+         margin: 6px 0 12px 0;
+         border: 1px solid #ccc;
+         border-radius: 0;
+         font-family: arial, verdana, sans-serif;
+         font-size: 14px;
+         box-sizing: border-box;
+         -webkit-appearance: none;
+      }
+
+      .md-mobile-picker-button.mbsc-button {
+         font-size: 13px;
+         padding: 0 15px;
+         line-height: 36px;
+         float: right;
+         margin: 6px 0;
+         width: 100%;
+      }
+
+      .mbsc-col-no-padding {
+         padding-left: 0;
+      }
+
+      .md-mobile-picker-box-label.mbsc-textfield-wrapper-box,
+      .md-mobile-picker-box-label .mbsc-textfield-wrapper-box,
+      .md-mobile-picker-inline {
+         margin: 6px 0 12px 0;
+      }
+   </style>
 
 
-   <link href="css/mobiscroll.javascript.min.css" rel="stylesheet" />
-   <script src="js/mobiscroll.javascript.min.js"></script>
+   <link href="./css/mobiscroll.javascript.min.css" rel="stylesheet" />
+   <script src="./js/mobiscroll.javascript.min.js"></script>
    <link rel="stylesheet" type="text/css" href="tp.css">
 </head>
 
@@ -127,7 +182,7 @@
    <div id=Button_Space_ship class="Button">Space Ship!</div>
 
 
-   <div id = Button_time class="Button">
+   <div id=Button_time class="Button">
       <div class="mbsc-form-group">
          <div class="mbsc-row">
             <div class="mbsc-col-8">

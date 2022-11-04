@@ -96,7 +96,7 @@ export const EARTH = {
     mass: 5.9736e24,
     radius: 3443.9307 * NM_TO_KM,
     tilt: 23 + (26 / 60) + (21 / 3600),
-    sideralDay: SIDERAL_DAY,
+    sideralDay: SIDERAL_DAY,//
     atmosphere: {
         atmospherePressure: 101.325,
         components: [{
