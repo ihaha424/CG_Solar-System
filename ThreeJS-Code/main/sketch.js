@@ -186,6 +186,19 @@ window.onload = function init()
   const lineMaterial = new THREE.LineBasicMaterial ({
     linewidth: 100
   });
+/*
+//loading??
+*/
+  
+  function start_loading(){
+   var scene_start = new THREE.Scene();
+    
+
+  }
+
+
+
+
 
 
   /*
