@@ -1,5 +1,6 @@
 export const G = 6.6742e-11;
-export const AU = 149597870; // astronomical unit in km
+export const AU = 1495.97870; // astronomical unit in km
+export const AU_NOMALIZE = 1495.97870;
 export const CIRCLE = 2 * Math.PI;
 export const QUARTER_CIRCLE = Math.PI / 2;
 export const KM = 1000;
@@ -27,3 +28,4 @@ export const DAY_PER_SECOND = HOUR_PER_SECOND * 24;
 export const MONTH_PER_SECOND = DAY_PER_SECOND * 30;
 export const HALF_YEAR_PER_SECOND = MONTH_PER_SECOND * 6;
 export const YEAR_PER_SECOND = HALF_YEAR_PER_SECOND * 2;
+export const SOLAR_SYSTEM = ['SUN','MERCURY','VENUS','EARTH','MARS','JUPITER','SATURN','URANUS','NEPTUNE','PLUTO'];

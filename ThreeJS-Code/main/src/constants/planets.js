@@ -1,6 +1,4 @@
 import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR } from './index.js';
-//import { Color } from '../../node_modules/three';
-//const TEX_DIR = 'static/images/surface/';
 
 export const SUN = {
     id: 'sun',
@@ -353,3 +351,4 @@ export const PLUTO = {
         color: '#aaaaaa',
     }
 };
+export const length = 9;
