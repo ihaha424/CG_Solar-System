@@ -36,6 +36,7 @@ export const MERCURY = {
     name: 'Mercury',
     mass: 3.3022e23,
     radius: 2439,
+    tilt: 0.0352,
     sideralDay: 58.646 * DAY,
     orbit: {
         base: {
@@ -69,7 +70,7 @@ export const VENUS = {
     sideralDay: 243.025 * DAY,
     orbit: {
         base: {
-            a: 0.72333566 * AU,
+            a: 0.72333566 * AU,//장반경
             e: 0.00677672,
             i: 3.39467605,
             l: 181.97909950,
@@ -96,7 +97,7 @@ export const EARTH = {
     mass: 5.9736e24,
     radius: 3443.9307 * NM_TO_KM,
     tilt: 23 + (26 / 60) + (21 / 3600),
-    sideralDay: SIDERAL_DAY,
+    sideralDay: SIDERAL_DAY,//
     atmosphere: {
         atmospherePressure: 101.325,
         components: [{

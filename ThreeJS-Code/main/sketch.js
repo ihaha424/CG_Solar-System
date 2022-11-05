@@ -10,8 +10,6 @@ const settings = {
   context: "webgl",
   scaleToView: true
 };
-
-
 //compute angle
 function angleToRad(angle) {
   return Math.PI / 180 * angle
@@ -70,6 +68,7 @@ var line_visualize = true;
 //space_ship button
 var s_flag = true;
 var shipRenderID;
+var timeScale = 1;
 window.onload = function init() {
   //const realSunSize = Planet.SUN.radius;
   //console.log(realSunSize);
@@ -154,8 +153,9 @@ window.onload = function init() {
   const uranusTexture = loader.load("assets/uranus.jpg");
   const neptuneTexture = loader.load("assets/neptune.jpg");
   const plutoTexture = loader.load("assets/pluto.jpeg");
-
-  /*
+  const saturnRingTexture1 = loader.load("assets/textures/saturn2_A_diffuse.png");
+  const saturnRingTexture2 = loader.load("assets/textures/saturn2_A_specularGlossiness.png");
+   /*
    * MATERIALS
    */
   const sunMaterial = new THREE.MeshStandardMaterial({ map: sunTexture });
@@ -164,7 +164,7 @@ window.onload = function init() {
   const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTexture });
   const marsMaterial = new THREE.MeshStandardMaterial({ map: marsTexture });
   const jupiterMaterial = new THREE.MeshStandardMaterial({ map: jupiterTexture });
-  // const saturnMaterial = new THREE.MeshStandardMaterial({ map: saturnTexture });
+  const saturnMaterial = new THREE.MeshStandardMaterial({ map: saturnTexture });
   const uranusMaterial = new THREE.MeshStandardMaterial({ map: uranusTexture });
   const neptuneMaterial = new THREE.MeshStandardMaterial({ map: neptuneTexture });
   const plutoMaterial = new THREE.MeshStandardMaterial({ map: plutoTexture });
@@ -204,12 +204,15 @@ window.onload = function init() {
   //controls.dispose();
   //renderer.dispose();
   function createPlanet(scene, mesh, group, x, scale, name) {//-DongMin
+    if(name!="SATURNRING"){
     const elem = document.createElement('button');//-DongMin
     elem.textContent = name;//-DongMin
     elem.name = name;
     labelContainerElem.appendChild(elem);//-DongMin
+    }
+
     mesh.position.set(x, 0, 0);
-    console.log(scale);
+    console.log(x);
     mesh.scale.setScalar(scale);
     console.log(scale);
     mesh.userData = scale * 3;
@@ -223,7 +226,6 @@ window.onload = function init() {
    * MESH
    */
   const geometry = new THREE.SphereGeometry(1, 32, 16);
-
   //plants number
   var plants_number = 10;//-DongMin
   plants_Mesh = [];//-DongMin
@@ -244,6 +246,7 @@ window.onload = function init() {
   const mercuryMesh = new THREE.Mesh(geometry, mercuryMaterial);
   createPlanet(scene, mercuryMesh, mercuryGroup, 25, Planet.MERCURY.radius / Planet.SUN.radius * sunSize, "MERCURY");//-DongMin
   plants_Mesh = plants_Mesh.concat(mercuryMesh);//-DongMin
+  mercuryMesh.rotation.y = Planet.MERCURY.tilt;
 
   const lineGeometry = new THREE.BufferGeometry().setFromPoints(25);
   const line = new THREE.Line(lineGeometry, lineMaterial);
@@ -253,58 +256,75 @@ window.onload = function init() {
   const venusMesh = new THREE.Mesh(geometry, venusMaterial);
   createPlanet(scene, venusMesh, venusGroup, 28, Planet.VENUS.radius / Planet.SUN.radius * sunSize, "VENUS");//-DongMin
   plants_Mesh = plants_Mesh.concat(venusMesh);//-DongMin
+  venusMesh.rotation.y = Planet.VENUS.tilt;
 
   const earthGroup = new THREE.Group();
   const earthMesh = new THREE.Mesh(geometry, earthMaterial);
   createPlanet(scene, earthMesh, earthGroup, 31, Planet.EARTH.radius / Planet.SUN.radius * sunSize, "EARTH");//-DongMin
   plants_Mesh = plants_Mesh.concat(earthMesh);//-DongMin
+  earthMesh.rotation.y = Planet.EARTH.tilt;
 
   const marsGroup = new THREE.Group();
   const marsMesh = new THREE.Mesh(geometry, marsMaterial);
   createPlanet(scene, marsMesh, marsGroup, 34, Planet.MARS.radius / Planet.SUN.radius * sunSize, "MARS");//-DongMin
   plants_Mesh = plants_Mesh.concat(marsMesh);//-DongMin
+  marsMesh.rotation.y = Planet.MARS.tilt;
 
   const jupiterGroup = new THREE.Group();
   const jupiterMesh = new THREE.Mesh(geometry, jupiterMaterial);
   createPlanet(scene, jupiterMesh, jupiterGroup, 42, Planet.JUPITER.radius / Planet.SUN.radius * sunSize, "JUPITER");//-DongMin
   plants_Mesh = plants_Mesh.concat(jupiterMesh);//-DongMin
-
-  const saturnGroup = new THREE.Group();
-  var saturnMesh = new THREE.Mesh();
-
-  var gltfloader = new THREE.GLTFLoader();
-  gltfloader.load('./assets/saturn.gltf', function (gltf){
-    saturnMesh = gltf.scene.children[0];
-    saturnMesh.position.set(50, 0, 0);
-    
-    
-
-  });
+  jupiterMesh.rotation.y = Planet.JUPITER.tilt;
   
 
+  let saturnPlanetRingMesh = [];
+  
+  const saturnGroup = new THREE.Group();
+  const saturnMesh = new THREE.Mesh(geometry, saturnMaterial);
   createPlanet(scene, saturnMesh, saturnGroup, 50, Planet.SATURN.radius / Planet.SUN.radius * sunSize, "SATURN");//-DongMin
-  var saturnPosition = new THREE.Vector3(50, 0, 0)
-  saturnMesh.position.set(saturnPosition);
+
+  let saturnRingMaterial = new THREE.MeshBasicMaterial({ map: saturnRingTexture1 });
+  let geometry_ring = new THREE.TorusGeometry(6.5, 0.7, 2, 50);
+  let saturnRingMesh = new THREE.Mesh(geometry_ring,saturnRingMaterial);
+  
+  saturnPlanetRingMesh.push(saturnRingMesh);
+
+  geometry_ring = new THREE.TorusGeometry(8, 0.7, 2, 50);
+  saturnRingMaterial = new THREE.MeshBasicMaterial({ map: saturnRingTexture2 });
+  saturnRingMesh = new THREE.Mesh(geometry_ring, saturnRingMaterial);
+  
+  saturnPlanetRingMesh.push(saturnRingMesh);
+  console.log(saturnGroup);
+
+  saturnPlanetRingMesh.forEach(w => {
+    w.rotation.x = 2;
+    w.rotation.y = 0.7;
+    createPlanet(scene, w, saturnGroup, 50, (Planet.SATURN.radius / Planet.SUN.radius * sunSize)/4, "SATURNRING");//-DongMin
+  });
+
+  
   plants_Mesh = plants_Mesh.concat(saturnMesh);//-DongMin
-  console.log(saturnMesh);
-  scene.add(saturnMesh);
+  saturnMesh.rotation.y = Planet.SATURN.tilt;
+
 
 
   const uranusGroup = new THREE.Group();
   const uranusMesh = new THREE.Mesh(geometry, uranusMaterial);
   createPlanet(scene, uranusMesh, uranusGroup, 56, Planet.URANUS.radius / Planet.SUN.radius * sunSize, "URANUS");//-DongMin
   plants_Mesh = plants_Mesh.concat(uranusMesh);//-DongMin
+  uranusMesh.rotation.y = Planet.URANUS.tilt;
 
   const neptuneGroup = new THREE.Group();
   const neptuneMesh = new THREE.Mesh(geometry, neptuneMaterial);
   createPlanet(scene, neptuneMesh, neptuneGroup, 60, Planet.NEPTUNE.radius / Planet.SUN.radius * sunSize, "NEPTUNE");//-DongMin
   plants_Mesh = plants_Mesh.concat(neptuneMesh);//-DongMin
+  neptuneMesh.rotation.y = Planet.NEPTUNE.tilt;
 
   const plutoGroup = new THREE.Group();
   const plutoMesh = new THREE.Mesh(geometry, plutoMaterial);
   createPlanet(scene, plutoMesh, plutoGroup, 64, Planet.PLUTO.radius / Planet.SUN.radius * sunSize, "PLUTO");//-DongMin
   plants_Mesh = plants_Mesh.concat(plutoMesh);//-DongMin
-
+  plutoMesh.rotation.y = Planet.PLUTO.tilt;
 
   /*
    * LIGHTING
@@ -406,11 +426,11 @@ window.onload = function init() {
   // line.geometry.setFromPoints(returnOrbit('MERCURY'))
 
   function render(time) {
-
     // var time = clock.getElapsedTime(); 
     // console.log(time);
     controls.update();
-    movement += 0.1;
+    var rate;
+    movement += 0.01;
 
     sunMesh.rotation.y = movement * 0.05
 
@@ -419,51 +439,54 @@ window.onload = function init() {
     // else
     //   line.geometry.setFromPoints([])
 
-
+    document.
+      getElementById("timeScaleSlider").
+      addEventListener("change", function (event) {
+      timeScale = Number(event.target.value);
+      });
+    
+      
     //mercuryGroup.rotation.y = movement * 0.5;
-    computed = CalculateOrbit.cal_orbit('MERCURY', 1000);
+    computed = CalculateOrbit.cal_orbit('MERCURY', timeScale);
     mercuryGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     mercuryMesh.rotation.y = movement * 0.20;
 
     //console.log(computed.pos.x/Index.AU,computed.pos.y/Index.AU)
-    computed = CalculateOrbit.cal_orbit('VENUS', 1000);
+    computed = CalculateOrbit.cal_orbit('VENUS', timeScale);
     venusGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //venusGroup.rotation.y = movement * 0.35;
     venusMesh.rotation.y = movement * 0.18;
 
-    computed = CalculateOrbit.cal_orbit('EARTH', 1000);
+    computed = CalculateOrbit.cal_orbit('EARTH', timeScale);
     earthGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
-    //earthGroup.rotation.y = movement * 0.3;
     earthMesh.rotation.y = movement * 0.15;
 
-    computed = CalculateOrbit.cal_orbit('MARS', 1000);
+    computed = CalculateOrbit.cal_orbit('MARS', timeScale);
     marsGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //marsGroup.rotation.y = movement * 0.2;
     marsMesh.rotation.y = movement * 0.2;
 
-    computed = CalculateOrbit.cal_orbit('JUPITER', 1000);
+    computed = CalculateOrbit.cal_orbit('JUPITER', timeScale);
     jupiterGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //jupiterGroup.rotation.y = movement * 0.05;
     jupiterMesh.rotation.y = movement * 0.05;
 
-    computed = CalculateOrbit.cal_orbit('SATURN', 1000);
+    computed = CalculateOrbit.cal_orbit('SATURN', timeScale);
     saturnGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
-    saturnMesh.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
-    // console.log(saturnMesh);
     //saturnGroup.rotation.y = movement * 0.03;
     saturnMesh.rotation.y = movement * 0.25;
 
-    computed = CalculateOrbit.cal_orbit('URANUS', 1000);
+    computed = CalculateOrbit.cal_orbit('URANUS', timeScale);
     uranusGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //uranusGroup.rotation.y = movement * 0.02;
     uranusMesh.rotation.y = movement * 0.25;
 
-    computed = CalculateOrbit.cal_orbit('NEPTUNE', 1000);
+    computed = CalculateOrbit.cal_orbit('NEPTUNE', timeScale);
     neptuneGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //neptuneGroup.rotation.y = movement * 0.015;
     neptuneMesh.rotation.y = movement * 0.25;
 
-    computed = CalculateOrbit.cal_orbit('PLUTO', 1000);
+    computed = CalculateOrbit.cal_orbit('PLUTO', timeScale);
     plutoGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //plutoGroup.rotation.y = movement * 0.005;
     plutoMesh.rotation.y = movement * 0.2;
