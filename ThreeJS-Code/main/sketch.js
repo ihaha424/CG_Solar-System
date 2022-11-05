@@ -147,6 +147,7 @@ window.onload = function init() {
   const mercuryTexture = loader.load("assets/mercury.jpg");
   const venusTexture = loader.load("assets/venus.jpg");
   const earthTexture = loader.load("assets/earth.jpg");
+  const moonTexture = loader.load("assets/moon.jpg");
   const marsTexture = loader.load("assets/mars.jpg");
   const jupiterTexture = loader.load("assets/jupiter.jpg");
   const saturnTexture = loader.load("assets/saturn.jpg");
@@ -162,6 +163,7 @@ window.onload = function init() {
   const mercuryMaterial = new THREE.MeshStandardMaterial({ map: mercuryTexture });
   const venusMaterial = new THREE.MeshStandardMaterial({ map: venusTexture });
   const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTexture });
+  const moonMaterial = new THREE.MeshStandardMaterial({map: moonTexture});
   const marsMaterial = new THREE.MeshStandardMaterial({ map: marsTexture });
   const jupiterMaterial = new THREE.MeshStandardMaterial({ map: jupiterTexture });
   const saturnMaterial = new THREE.MeshStandardMaterial({ map: saturnTexture });
@@ -264,6 +266,12 @@ window.onload = function init() {
   planets_Mesh = planets_Mesh.concat(earthMesh);//-DongMin
   earthMesh.rotation.y = Planet.EARTH.tilt;
 
+  const moonGroup = new THREE.Group();
+  const moonMesh = new THREE.Mesh(geometry, moonMaterial);
+  createPlanet(scene, moonMesh, moonGroup, 32, (Planet.EARTH.radius / Planet.SUN.radius * sunSize, "MOON")*(17/64))
+  planets_Mesh = planets_Mesh.concat(moonMesh)
+  earthGroup.add(moonGroup);
+
 
   const marsGroup = new THREE.Group();
   const marsMesh = new THREE.Mesh(geometry, marsMaterial);
@@ -295,7 +303,6 @@ window.onload = function init() {
   saturnRingMesh = new THREE.Mesh(geometry_ring, saturnRingMaterial);
   
   saturnPlanetRingMesh.push(saturnRingMesh);
-  console.log(saturnGroup);
 
   saturnPlanetRingMesh.forEach(w => {
     w.rotation.x = 2;
@@ -449,7 +456,7 @@ window.onload = function init() {
     // console.log(time);
     controls.update();
 
-    lineMaterial.linewidth = 0.001;
+    
     var rate;
     movement += 0.01;
 
@@ -481,6 +488,13 @@ window.onload = function init() {
     computed = CalculateOrbit.cal_orbit('EARTH', timeScale);
     earthGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     earthMesh.rotation.y = movement * 0.15;
+    earthGroup.rotation.y = movement * 0.15;
+
+    moonMesh.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
+    moonGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
+    moonMesh.rotation.y = movement * 0.3;
+    // console.log(moonMesh.position)
+    // console.log(earthGroup.position)
 
     computed = CalculateOrbit.cal_orbit('MARS', timeScale);
     marsGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
@@ -779,6 +793,7 @@ window.onload = function init() {
       labelContainerElem.style.display = 'none';
       labelContainerElem2.style.display = 'none';
       space_ship_render();
+      lineMaterial.visible = false;
       s_flag = false;
     }
     else {
@@ -791,6 +806,7 @@ window.onload = function init() {
       controls.minDistance = 5;
       moveCam(0, 5000, 0, 0, 0, 0, 0);
       s_flag = true;
+      lineMaterial.visible = true;
     }
 
   };
