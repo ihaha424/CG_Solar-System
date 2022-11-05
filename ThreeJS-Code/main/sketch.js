@@ -1,5 +1,7 @@
 import * as Planet from './src/constants/planets.js';
 import * as Index from './src/constants/index.js';
+import * as Planet_info from './src/constants/planets_info.js'
+
 import * as CalculateOrbit from './cal_orbit.js';
 const settings = {
   // Make the loop animated
@@ -579,18 +581,66 @@ window.onload = function init() {
 
     moveCam(tempV.x, tempV.y, tempV.z, tempV.x, tempV.y, tempV.z, plants_Mesh[0]);
     //moveCam(scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z,scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z);
+    var card = document.querySelector(".planet-card");
+      card.style.visibility = "visible";//버튼 누르면 설명창 보이게
+      var p_name = event.target.innerText;
+
+      let planet_index;
+      planet_index = getplanetIndex(p_name);
+      var target_planet = (Planet_info.PLANETS[planet_index]);
+
+      let x = document.getElementsByClassName("title");
+      x = document.getElementsByTagName("h2")[0];
+      x.innerText=target_planet.name;
+      
+      let meanTemp = document.querySelector(".meanTemp");
+      meanTemp.innerText = target_planet.meanTemp;
+
+      let caption = document.querySelector(".caption");
+      caption.innerText = target_planet.caption;
+
+      let description = document.querySelector(".description");
+      description.innerText = target_planet.description;
+
+      let radius = document.querySelector(".Radius");
+      radius.innerText = target_planet.radius +" km";
+
+      let timesLarger = document.querySelector(".timesLarger");
+      timesLarger.innerText = target_planet.timesLarger +"X";
+
+      let distanceFromSun = document.querySelector(".distanceFromSun");
+      distanceFromSun.innerText = target_planet.distanceFromSun +" AU";
+
+      let year = document.querySelector(".year");
+      year.innerText = target_planet.year;
+
+      let day = document.querySelector(".day");
+      day.innerText = target_planet.day;
+
+      let moons = document.querySelector(".moons");
+      moons.innerText = target_planet.moons;
+
+      document.querySelector(".close").onclick = function(){
+        card = document.querySelector(".planet-card");
+        card.style.visibility = "hidden";//x누르면 설명창 꺼짐
+      };
+
+      x = document.querySelector(".planet-img");
+      x.src = "./assets/cards/"+p_name.toLowerCase()+".png";
   };
   labelContainerElem.childNodes[0].onclick = function (event) {
     value_z = 15;
     sunMesh.updateWorldMatrix(true, false);
     plants_Mesh[0].getWorldPosition(tempV);
     moveCam(tempV.x, tempV.y, tempV.z, tempV.x, tempV.y, tempV.z, plants_Mesh[0]);
+    
   };
 
   //plant
   for (i = 1; i < plants_number; i++) {
     var temp_button = document.getElementById(button_list[i])
     temp_button.button = i;
+
     temp_button.onclick = function (event) {
       //scene.children[5].children[0].position.x
       value_z = 5;//value_Z는 정면에서 보기 위한 z축의 값
@@ -600,6 +650,53 @@ window.onload = function init() {
       plants_Mesh[object_num].getWorldPosition(tempV);
 
       moveCam(tempV.x, tempV.y, tempV.z, tempV.x, tempV.y, tempV.z, plants_Mesh[object_num]);
+      //해당하는 행성의 버튼을누르면 그에대한 정보를 보여주는 창 
+      var card = document.querySelector(".planet-card");
+      card.style.visibility = "visible";//버튼 누르면 설명창 보이게
+      var p_name = event.target.innerText;
+      let planet_index;
+      planet_index = getplanetIndex(p_name);
+      var target_planet = (Planet_info.PLANETS[planet_index]);
+
+      let x = document.getElementsByClassName("title");
+      x = document.getElementsByTagName("h2")[0];
+      x.innerText=target_planet.name;
+  
+
+      let meanTemp = document.querySelector(".meanTemp");
+      meanTemp.innerText = target_planet.meanTemp;
+
+      let caption = document.querySelector(".caption");
+      caption.innerText = target_planet.caption;
+
+      let description = document.querySelector(".description");
+      description.innerText = target_planet.description;
+
+      let radius = document.querySelector(".Radius");
+      radius.innerText = target_planet.radius +" km";
+
+      let timesLarger = document.querySelector(".timesLarger");
+      timesLarger.innerText = target_planet.timesLarger +"X";
+
+      let distanceFromSun = document.querySelector(".distanceFromSun");
+      distanceFromSun.innerText = target_planet.distanceFromSun +" AU";
+
+      let year = document.querySelector(".year");
+      year.innerText = target_planet.year;
+
+      let day = document.querySelector(".day");
+      day.innerText = target_planet.day;
+
+      let moons = document.querySelector(".moons");
+      moons.innerText = target_planet.moons;
+
+      document.querySelector(".close").onclick = function(){
+        card = document.querySelector(".planet-card");
+        card.style.visibility = "hidden";//x누르면 설명창 꺼짐
+      };
+
+      x = document.querySelector(".planet-img");
+      x.src = "./assets/cards/"+p_name.toLowerCase()+".png";
 
     };
     labelContainerElem.childNodes[i].id = i;
@@ -611,11 +708,49 @@ window.onload = function init() {
     }
   }
 
+
+  function getplanetIndex(name){//행성의 이름을 index화 하여 html에서 element 찾기위한 함수
+    let p_index=0;
+    switch(name){
+      case "MERCURY":
+        p_index = 1;
+        break;
+      case "VENUS":
+        p_index = 2;
+        break;
+      case "EARTH":
+        p_index = 3;
+        break;
+      case "MARS":
+        p_index = 4;
+        break;
+      case "JUPITER":
+        p_index = 5;
+        break;
+        case "SATURN":
+        p_index = 6;
+        break;
+      case "URANUS":
+        p_index = 7;
+        break;
+      case "NEPTUNE":
+        p_index = 8;
+        break;
+      case "PLUTO":
+        p_index = 9;
+        break;
+      default:
+        p_index =0;
+    }
+    return p_index;
+  }
   document.getElementById("Button_Init").onclick = function () {
     value_z = 0;
     controls.maxDistance = 1000000;
     controls.minDistance = 30;
     moveCam(0, 5000, 0, 0, 0, 0, 0);
+    var card = document.querySelector(".planet-card");
+    card.style.visibility = "hidden";//init 누르면 설명창 꺼짐
   };
 
   /*
