@@ -58,7 +58,7 @@ var time;
 const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
 const tempV = new THREE.Vector3();
-const plants_position = new THREE.Vector3();
+var plants_position = new THREE.Vector3();
 var plants_Mesh;
 //button spotlight
 var spotlight2
@@ -162,7 +162,7 @@ window.onload = function init() {
   const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTexture });
   const marsMaterial = new THREE.MeshStandardMaterial({ map: marsTexture });
   const jupiterMaterial = new THREE.MeshStandardMaterial({ map: jupiterTexture });
-  const saturnMaterial = new THREE.MeshStandardMaterial({ map: saturnTexture });
+  // const saturnMaterial = new THREE.MeshStandardMaterial({ map: saturnTexture });
   const uranusMaterial = new THREE.MeshStandardMaterial({ map: uranusTexture });
   const neptuneMaterial = new THREE.MeshStandardMaterial({ map: neptuneTexture });
   const plutoMaterial = new THREE.MeshStandardMaterial({ map: plutoTexture });
@@ -199,9 +199,21 @@ window.onload = function init() {
 
 
   }
-
-
-
+  //controls.dispose();
+  //renderer.dispose();
+  function createPlanet(scene, mesh, group, x, scale, name) {//-DongMin
+    const elem = document.createElement('button');//-DongMin
+    elem.textContent = name;//-DongMin
+    elem.name = name;
+    labelContainerElem.appendChild(elem);//-DongMin
+    mesh.position.set(x, 0, 0);
+    console.log(scale);
+    mesh.scale.setScalar(scale);
+    console.log(scale);
+    mesh.userData = scale * 3;
+    group.add(mesh);
+    scene.add(group);
+  }
 
 
 
@@ -256,13 +268,29 @@ window.onload = function init() {
   plants_Mesh = plants_Mesh.concat(jupiterMesh);//-DongMin
 
   const saturnGroup = new THREE.Group();
-  const saturnMesh = new THREE.Mesh(geometry, saturnMaterial);
+  var saturnMesh = new THREE.Mesh();
+
+  var gltfloader = new THREE.GLTFLoader();
+  gltfloader.load('./assets/saturn.gltf', function (gltf){
+    saturnMesh = gltf.scene.children[0];
+    saturnMesh.position.set(50, 0, 0);
+    
+    
+
+  });
+  
+
   createPlanet(scene, saturnMesh, saturnGroup, 50, Planet.SATURN.radius / Planet.SUN.radius * sunSize, "SATURN");//-DongMin
+  var saturnPosition = new THREE.Vector3(50, 0, 0)
+  saturnMesh.position.set(saturnPosition);
   plants_Mesh = plants_Mesh.concat(saturnMesh);//-DongMin
+  console.log(saturnMesh);
+  scene.add(saturnMesh);
+
 
   const uranusGroup = new THREE.Group();
   const uranusMesh = new THREE.Mesh(geometry, uranusMaterial);
-  createPlanet(scene, uranusMesh, uranusGroup, 56, Planet.MERCURY.radius / Planet.URANUS.radius * sunSize, "URANUS");//-DongMin
+  createPlanet(scene, uranusMesh, uranusGroup, 56, Planet.URANUS.radius / Planet.SUN.radius * sunSize, "URANUS");//-DongMin
   plants_Mesh = plants_Mesh.concat(uranusMesh);//-DongMin
 
   const neptuneGroup = new THREE.Group();
@@ -373,7 +401,7 @@ window.onload = function init() {
 
   // draw each frame
   render();
-  line.geometry.setFromPoints(returnOrbit('MERCURY'))
+  // line.geometry.setFromPoints(returnOrbit('MERCURY'))
 
   function render(time) {
 
@@ -418,6 +446,8 @@ window.onload = function init() {
 
     computed = CalculateOrbit.cal_orbit('SATURN', 1000);
     saturnGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
+    saturnMesh.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
+    // console.log(saturnMesh);
     //saturnGroup.rotation.y = movement * 0.03;
     saturnMesh.rotation.y = movement * 0.25;
 
@@ -485,21 +515,7 @@ window.onload = function init() {
     renderer.render(scene, camera[0]);
   }
 
-  //controls.dispose();
-  //renderer.dispose();
-  function createPlanet(scene, mesh, group, x, scale, name) {//-DongMin
-    const elem = document.createElement('button');//-DongMin
-    elem.textContent = name;//-DongMin
-    elem.name = name;
-    labelContainerElem.appendChild(elem);//-DongMin
-    mesh.position.set(x, 0, 0);
-    console.log(scale);
-    mesh.scale.setScalar(scale);
-    console.log(scale);
-    mesh.userData = scale * 3;
-    group.add(mesh);
-    scene.add(group);
-  }
+  
 
   function createSpotlights(scene) {
     var color = 0xFFFFFF;
@@ -677,7 +693,7 @@ gltfloader.load('assets/spaceship.gltf', function (gltf) {
   //spaceship.scene.position.set(tempEarth.x,tempEarth.y + 2,tempEarth.z);
   // spaceship.scene.scale.set(0.01, 0.01, 0.01);
   // spaceship.scene = gltf.scene;
-  console.log(scene);
+  // console.log(scene);
 });
 function space_ship_render() {
   window.cancelAnimationFrame(moveID);
