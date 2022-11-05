@@ -1,5 +1,17 @@
 import { AU, SIDERAL_DAY, NM_TO_KM, DAY, HOUR } from './index.js';
 
+export const RADIUS = {
+    'MERCURY':2439,
+    'VENUS':6051,
+    'EARTH':3443.9307,
+    'MARS':3376,
+    'JUPITER':71492,
+    'SATURN':58232,
+    'URANUS':25559,
+    'NEPTUNE':24764,
+    'PLUTO':1153000
+}
+
 export const SUN = {
     id: 'sun',
     name: 'The Sun',
