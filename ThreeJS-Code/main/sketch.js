@@ -57,11 +57,13 @@ var moveID;
 var time;
 const SCREEN_WIDTH = window.innerWidth;
 const SCREEN_HEIGHT = window.innerHeight;
-const tempV= new THREE.Vector3();
-const plants_position= new THREE.Vector3();
+const tempV = new THREE.Vector3();
+var plants_position = new THREE.Vector3();
 var plants_Mesh;
 //button spotlight
 var spotlight2
+
+var line_visualize = true;
 
 //space_ship button
 var s_flag = true;
@@ -84,7 +86,7 @@ window.onload = function init() {
 
   // camera[0]
   camera[0] = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 100000);
-  camera[0].position.set(30, 5, 35);
+  camera[0].position.set(0, 5000, 0);
   camera[1] = new THREE.PerspectiveCamera(100, SCREEN_WIDTH / SCREEN_HEIGHT, 1, 100000);
   const cameraToPoint = new THREE.Vector3();
   const cameraPosition = new THREE.Vector3();
@@ -103,16 +105,16 @@ window.onload = function init() {
       this.raycaster = new THREE.Raycaster();
       this.pickedObject = null;
       this.pickedObjectSavedColor = 0;
-      this.flag =true;
+      this.flag = true;
     }
     pick(normalizedPosition, scene, camera) {
       // 이미 다른 물체를 피킹했다면 색을 복원합니다
       if (this.pickedObject) {
-      //   this.pickedObject.material.emissive.setHex(this.pickedObjectSavedColor);
-          this.pickedObject = undefined;
-          this.flag =true;
-       }
-   
+        //   this.pickedObject.material.emissive.setHex(this.pickedObjectSavedColor);
+        this.pickedObject = undefined;
+        this.flag = true;
+      }
+
       // 절두체 안에 광선을 쏩니다
       this.raycaster.setFromCamera(normalizedPosition, camera);
       // 광선과 교차하는 물체들을 배열로 만듭니다
@@ -120,11 +122,11 @@ window.onload = function init() {
       if (intersectedObjects.length) {
         // 첫 번째 물체가 제일 가까우므로 해당 물체를 고릅니다
         this.pickedObject = intersectedObjects[0].object;
-        if(this.flag==true){
+        if (this.flag == true) {
           this.flag = false;
           value_z = this.pickedObject.userData;
           this.pickedObject.getWorldPosition(tempV);
-          moveCam(tempV.x,tempV.y,tempV.z,tempV.x,tempV.y,tempV.z,this.pickedObject);
+          moveCam(tempV.x, tempV.y, tempV.z, tempV.x, tempV.y, tempV.z, this.pickedObject);
         }
         // 기존 색을 저장해둡니다
         //this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
@@ -160,7 +162,7 @@ window.onload = function init() {
   const earthMaterial = new THREE.MeshStandardMaterial({ map: earthTexture });
   const marsMaterial = new THREE.MeshStandardMaterial({ map: marsTexture });
   const jupiterMaterial = new THREE.MeshStandardMaterial({ map: jupiterTexture });
-  const saturnMaterial = new THREE.MeshStandardMaterial({ map: saturnTexture });
+  // const saturnMaterial = new THREE.MeshStandardMaterial({ map: saturnTexture });
   const uranusMaterial = new THREE.MeshStandardMaterial({ map: uranusTexture });
   const neptuneMaterial = new THREE.MeshStandardMaterial({ map: neptuneTexture });
   const plutoMaterial = new THREE.MeshStandardMaterial({ map: plutoTexture });
@@ -188,18 +190,30 @@ window.onload = function init() {
   const lineMaterial = new THREE.LineBasicMaterial({
     linewidth: 100
   });
-/*
-//loading??
-*/
-  
-  function start_loading(){
-   var scene_start = new THREE.Scene();
-    
+  /*
+  //loading??
+  */
+
+  function start_loading() {
+    var scene_start = new THREE.Scene();
+
 
   }
-
-
-
+  //controls.dispose();
+  //renderer.dispose();
+  function createPlanet(scene, mesh, group, x, scale, name) {//-DongMin
+    const elem = document.createElement('button');//-DongMin
+    elem.textContent = name;//-DongMin
+    elem.name = name;
+    labelContainerElem.appendChild(elem);//-DongMin
+    mesh.position.set(x, 0, 0);
+    console.log(scale);
+    mesh.scale.setScalar(scale);
+    console.log(scale);
+    mesh.userData = scale * 3;
+    group.add(mesh);
+    scene.add(group);
+  }
 
 
 
@@ -216,12 +230,12 @@ window.onload = function init() {
   sunMesh.position.set(0, 0, 0);
   const sunSize = Planet.SUN.radius / Index.AU;
   sunMesh.scale.setScalar(sunSize);
+  sunMesh.userData = sunSize * 3;
   scene.add(sunMesh);
   const elem = document.createElement('button');//-DongMin
   elem.textContent = "SUN";//-DongMin
   elem.name = "SUN";
   labelContainerElem.appendChild(elem);//-DongMin
-  sunMesh.userData = 20;
   plants_Mesh = plants_Mesh.concat(sunMesh);//-DongMin
 
   const mercuryGroup = new THREE.Group();
@@ -229,7 +243,7 @@ window.onload = function init() {
   createPlanet(scene, mercuryMesh, mercuryGroup, 25, Planet.MERCURY.radius / Planet.SUN.radius * sunSize, "MERCURY");//-DongMin
   plants_Mesh = plants_Mesh.concat(mercuryMesh);//-DongMin
 
-  const lineGeometry = new THREE.BufferGeometry().setFromPoints(makeCircle(25));
+  const lineGeometry = new THREE.BufferGeometry().setFromPoints(25);
   const line = new THREE.Line(lineGeometry, lineMaterial);
   scene.add(line);
 
@@ -254,13 +268,29 @@ window.onload = function init() {
   plants_Mesh = plants_Mesh.concat(jupiterMesh);//-DongMin
 
   const saturnGroup = new THREE.Group();
-  const saturnMesh = new THREE.Mesh(geometry, saturnMaterial);
+  var saturnMesh = new THREE.Mesh();
+
+  var gltfloader = new THREE.GLTFLoader();
+  gltfloader.load('./assets/saturn.gltf', function (gltf){
+    saturnMesh = gltf.scene.children[0];
+    saturnMesh.position.set(50, 0, 0);
+    
+    
+
+  });
+  
+
   createPlanet(scene, saturnMesh, saturnGroup, 50, Planet.SATURN.radius / Planet.SUN.radius * sunSize, "SATURN");//-DongMin
+  var saturnPosition = new THREE.Vector3(50, 0, 0)
+  saturnMesh.position.set(saturnPosition);
   plants_Mesh = plants_Mesh.concat(saturnMesh);//-DongMin
+  console.log(saturnMesh);
+  scene.add(saturnMesh);
+
 
   const uranusGroup = new THREE.Group();
   const uranusMesh = new THREE.Mesh(geometry, uranusMaterial);
-  createPlanet(scene, uranusMesh, uranusGroup, 56, Planet.MERCURY.radius / Planet.URANUS.radius * sunSize, "URANUS");//-DongMin
+  createPlanet(scene, uranusMesh, uranusGroup, 56, Planet.URANUS.radius / Planet.SUN.radius * sunSize, "URANUS");//-DongMin
   plants_Mesh = plants_Mesh.concat(uranusMesh);//-DongMin
 
   const neptuneGroup = new THREE.Group();
@@ -277,10 +307,10 @@ window.onload = function init() {
   /*
    * LIGHTING
    */
-  
 
-  const sunlight = new THREE.DirectionalLight("white",1);
-  sunlight.position.set(1000,0,0);
+
+  const sunlight = new THREE.DirectionalLight("white", 1);
+  sunlight.position.set(1000, 0, 0);
   scene.add(sunlight);
 
   const light = new THREE.SpotLight("white", 1);
@@ -292,8 +322,8 @@ window.onload = function init() {
   createSpotlights(scene);
 
   //button spotlight
-  spotlight2 = new THREE.PointLight( 0xFFFFFF,1);
-  spotlight2.position.set(0,0,0);
+  spotlight2 = new THREE.PointLight(0xFFFFFF, 1);
+  spotlight2.position.set(0, 0, 0);
   scene.add(spotlight2);
 
   /*
@@ -302,7 +332,7 @@ window.onload = function init() {
   scene.add(new THREE.PointLightHelper(light, 0.5));
 
   //scene.add( new THREE.SpotLightHelper( spotLightLeft ));
-  scene.add(new THREE.GridHelper(75, 50));//그리드 생성기
+  // scene.add(new THREE.GridHelper(75, 50));//그리드 생성기
 
 
   var clock = new THREE.Clock();
@@ -310,44 +340,71 @@ window.onload = function init() {
   var delta = 0;
   var movement = 1;
 
-/*
-//picking
-*/
-const pickPosition = { x: 0, y: 0 };
-clearPickPosition();
+  /*
+  //picking
+  */
+  const pickPosition = { x: 0, y: 0 };
+  clearPickPosition();
 
-function getCanvasRelativePosition(event) {
-  const rect = canvas.getBoundingClientRect();
-  return {
-    x: (event.clientX - rect.left) * canvas.width  / rect.width,
-    y: (event.clientY - rect.top ) * canvas.height / rect.height,
-  };
-}
- 
-function setPickPosition(event) {
-  const pos = getCanvasRelativePosition(event);
-  pickPosition.x = (pos.x / canvas.width ) *  2 - 1;
-  pickPosition.y = (pos.y / canvas.height) * -2 + 1;  // Y 축을 뒤집었음
-}
- 
-function clearPickPosition() {
-  /**
-   * 마우스의 경우는 항상 위치가 있어 그다지 큰
-   * 상관이 없지만, 터치 같은 경우 사용자가 손가락을
-   * 떼면 피킹을 멈춰야 합니다. 지금은 일단 어떤 것도
-   * 선택할 수 없는 값으로 지정해두었습니다
-   **/
-  pickPosition.x = -100000;
-  pickPosition.y = -100000;
-}
- 
-window.addEventListener('mousedown', setPickPosition);
-window.addEventListener('mouseup', clearPickPosition);
+  function getCanvasRelativePosition(event) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: (event.clientX - rect.left) * canvas.width / rect.width,
+      y: (event.clientY - rect.top) * canvas.height / rect.height,
+    };
+  }
+
+  function setPickPosition(event) {
+    const pos = getCanvasRelativePosition(event);
+    pickPosition.x = (pos.x / canvas.width) * 2 - 1;
+    pickPosition.y = (pos.y / canvas.height) * -2 + 1;  // Y 축을 뒤집었음
+  }
+
+  function clearPickPosition() {
+    /**
+     * 마우스의 경우는 항상 위치가 있어 그다지 큰
+     * 상관이 없지만, 터치 같은 경우 사용자가 손가락을
+     * 떼면 피킹을 멈춰야 합니다. 지금은 일단 어떤 것도
+     * 선택할 수 없는 값으로 지정해두었습니다
+     **/
+    pickPosition.x = -100000;
+    pickPosition.y = -100000;
+  }
+
+  window.addEventListener('mousedown', setPickPosition);
+  window.addEventListener('mouseup', clearPickPosition);
+
+  var computed;
+
+  function returnOrbit (planet) {
+    var computed_list = []
+
+    for (var i = 0; i < 10; ) {
+      console.log(planet)
+      computed = CalculateOrbit.cal_orbit(planet, 10);
+      
+      computed_list.push( (computed.pos.x, computed.pos.y));
+
+    }
+
+    return computed_list;
+
+  } 
+
+  // for (var each_planet in Index.SOLAR_SYSTEM) {
+
+  //   console.log(each_planet[]);
+  //   renderOrbit(each_planet);
+  // }
+
+
+
   // draw each frame
   render();
-var computed;
-  function render(time){
-    
+  // line.geometry.setFromPoints(returnOrbit('MERCURY'))
+
+  function render(time) {
+
     // var time = clock.getElapsedTime(); 
     // console.log(time);
     controls.update();
@@ -356,8 +413,14 @@ var computed;
 
     sunMesh.rotation.y = movement * 0.05
 
+    // if (line_visualize)
+    //   line.geometry.setFromPoints()
+    // else
+    //   line.geometry.setFromPoints([])
+
+
     //mercuryGroup.rotation.y = movement * 0.5;
-    computed = CalculateOrbit.cal_orbit('MERCURY',1000);
+    computed = CalculateOrbit.cal_orbit('MERCURY', 1000);
     mercuryGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     mercuryMesh.rotation.y = movement * 0.20;
 
@@ -384,6 +447,8 @@ var computed;
 
     computed = CalculateOrbit.cal_orbit('SATURN', 1000);
     saturnGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
+    saturnMesh.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
+    // console.log(saturnMesh);
     //saturnGroup.rotation.y = movement * 0.03;
     saturnMesh.rotation.y = movement * 0.25;
 
@@ -408,64 +473,50 @@ var computed;
     // 카메라의 위치를 가져옵니다.
     camera[0].getWorldPosition(cameraPosition);
 
-    for(var i = 0; i<10; i++){
-      plants_Mesh[i].updateWorldMatrix(true,false);
+    for (var i = 0; i < 10; i++) {
+      plants_Mesh[i].updateWorldMatrix(true, false);
       plants_Mesh[i].getWorldPosition(plants_position);
       
-      tempV.copy(plants_position);
-      tempV.applyMatrix3(normalMatrix);
+      // tempV.copy(plants_position);
+      // tempV.applyMatrix3(normalMatrix);
  
-      // 카메라로부터 이 위치까지의 거리를 계산합니다.
-      cameraToPoint.copy(plants_position);
-      cameraToPoint.applyMatrix4(camera[0].matrixWorldInverse).normalize();
+      // // 카메라로부터 이 위치까지의 거리를 계산합니다.
+      // cameraToPoint.copy(plants_position);
+      // cameraToPoint.applyMatrix4(camera[0].matrixWorldInverse).normalize();
       
-      const dot = tempV.dot(cameraToPoint);
+      // const dot = tempV.dot(cameraToPoint);
  
-      // 카메라를 바라보지 않는다면 이름표를 숨깁니다.
-      if (dot < minVisibleDot) {
-        labelContainerElem.childNodes[i].style.display = 'none';
-        continue;
-      }
-      labelContainerElem.childNodes[i].style.display = '';
+      // // 카메라를 바라보지 않는다면 이름표를 숨깁니다.
+      // if (dot < minVisibleDot) {
+      //   labelContainerElem.childNodes[i].style.display = 'none';
+      //   continue;
+      // }
+      // labelContainerElem.childNodes[i].style.display = '';
  
       tempV.copy(plants_position);
       tempV.project(camera[0]);
       //console.log(i,tempV);
-      if((tempV.x < -1 && tempV.x > 1)||(tempV.y < -1 && tempV.y > 1)){
-        labelContainerElem.childNodes[i].style.display = 'none';  
+      if ((tempV.x < -1 && tempV.x > 1) || (tempV.y < -1 && tempV.y > 1)) {
+        labelContainerElem.childNodes[i].style.display = 'none';
         continue;
       }
       labelContainerElem.childNodes[i].style.display = '';
       const x = (tempV.x * .5+ .5) * canvas.clientWidth;
-      const y = (tempV.y * -.5 + .5) * canvas.clientHeight - 50;
+      const y = (tempV.y * -.5 + .5) * canvas.clientHeight - 50+i*10;
       labelContainerElem.childNodes[i].style.transform = `translate(-50%, -50%) translate(${ x }px,${ y }px)`;
     
     }
-    
-    spotlight2.position.set(camera[0].position.x,camera[0].position.y,camera[0].position.z);
+
+    spotlight2.position.set(camera[0].position.x, camera[0].position.y, camera[0].position.z);
     time *= 0.001;
-    pickHelper.pick(pickPosition,plants_Mesh,camera[0]);  
+    pickHelper.pick(pickPosition, plants_Mesh, camera[0]);
 
 
     requestAnimationFrame(render);
     renderer.render(scene, camera[0]);
   }
 
-  //controls.dispose();
-  //renderer.dispose();
-  function createPlanet(scene, mesh, group, x, scale, name) {//-DongMin
-    const elem = document.createElement('button');//-DongMin
-    elem.textContent = name;//-DongMin
-    elem.name = name;
-    labelContainerElem.appendChild(elem);//-DongMin
-    mesh.position.set(x, 0, 0);
-    console.log(scale);
-    mesh.scale.setScalar(scale);
-    console.log(scale);
-    mesh.userData = scale * 3;
-    group.add(mesh);
-    scene.add(group);
-  }
+  
 
   function createSpotlights(scene) {
     var color = 0xFFFFFF;
@@ -482,9 +533,9 @@ var computed;
         i >= 2 && i < 4 ? value : 0,
         i >= 4 ? value : 0
       );
-    scene.add( spotlight );
-  });
-}
+      scene.add(spotlight);
+    });
+  }
 
   //camera[0] button
   var button_list = [];
@@ -537,7 +588,7 @@ var computed;
     value_z = 0;
     controls.maxDistance = 1000000;
     controls.minDistance = 30;
-    moveCam(0, 30, 0,0,0,0,0);
+    moveCam(0, 5000, 0, 0, 0, 0, 0);
   };
 
   /*
@@ -558,7 +609,7 @@ var computed;
       spotlight2.value = 3;
       controls.maxDistance = 1000;
       controls.minDistance = 5;
-      moveCam(0, 30, 0,0,0,0,0);
+      moveCam(0, 5000, 0, 0, 0, 0, 0);
       s_flag = true;
     }
 
@@ -569,11 +620,11 @@ var computed;
 
 
 //camera[0] moving -DongMin
-function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
-{   
-  if(flag == 1){
+function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh) {
+  if (flag == 1) {
     return;
   }
+  console.log(Mesh);
   //button lock
   flag = 1;
   window.cancelAnimationFrame(moveID);
@@ -613,19 +664,19 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
       moveID = window.requestAnimationFrame(move_view);
     else {
       window.cancelAnimationFrame(moveID);
-    function move_object(){
-      Mesh.getWorldPosition(tempV);
-      controls.maxDistance = Mesh.userData;
-      controls.minDistance = Mesh.userData;
-      controls.target.set(tempV.x,tempV.y,tempV.z);
-      //클릭시 빛....애매함.
-      renderer.render(scene,camera[0]);
-      controls.update();
-      moveID=window.requestAnimationFrame(move_object);
-    }
-    if(Mesh != 0){
-      move_object();
-    }
+      function move_object() {
+        Mesh.getWorldPosition(tempV);
+        controls.maxDistance = Mesh.userData;
+        controls.minDistance = Mesh.userData;
+        controls.target.set(tempV.x, tempV.y, tempV.z);
+        //클릭시 빛....애매함.
+        renderer.render(scene, camera[0]);
+        controls.update();
+        moveID = window.requestAnimationFrame(move_object);
+      }
+      if (Mesh != 0) {
+        move_object();
+      }
       //button unlock
       flag = 0;
     }
@@ -638,14 +689,14 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh)
 var mesh_ship = new THREE.Mesh();
 var speed = 0.0;
 var gltfloader = new THREE.GLTFLoader();
-  gltfloader.load('assets/spaceship.gltf', function( gltf) {
-    mesh_ship = gltf.scene.children[0];      
-    //spaceship.scene.position.set(tempEarth.x,tempEarth.y + 2,tempEarth.z);
-    // spaceship.scene.scale.set(0.01, 0.01, 0.01);
-    // spaceship.scene = gltf.scene;
-    console.log(scene);
-} );
-function space_ship_render(){
+gltfloader.load('assets/spaceship.gltf', function (gltf) {
+  mesh_ship = gltf.scene.children[0];
+  //spaceship.scene.position.set(tempEarth.x,tempEarth.y + 2,tempEarth.z);
+  // spaceship.scene.scale.set(0.01, 0.01, 0.01);
+  // spaceship.scene = gltf.scene;
+  // console.log(scene);
+});
+function space_ship_render() {
   window.cancelAnimationFrame(moveID);
   window.cancelAnimationFrame(shipRenderID);
 
@@ -661,10 +712,10 @@ function space_ship_render(){
 
   var tempEarth = new THREE.Vector3();
   plants_Mesh[3].getWorldPosition(tempEarth);
-  console.log(tempEarth.x,tempEarth.y + 2,tempEarth.z)
+  console.log(tempEarth.x, tempEarth.y + 2, tempEarth.z)
 
-  mesh_ship.position.set(tempEarth.x,tempEarth.y + 2,tempEarth.z);
-  scene.add( mesh_ship );
+  mesh_ship.position.set(tempEarth.x, tempEarth.y + 2, tempEarth.z);
+  scene.add(mesh_ship);
 
   //goal_ship = new THREE.Object3D;
   follow = new THREE.Object3D;
@@ -718,8 +769,8 @@ function space_ship_render(){
     // else if ( keys.s )//s면 뒤로
     //   speed = -0.1;
 
-    velocity += ( speed - velocity ) * .3;
-    mesh_ship.translateY( velocity );
+    velocity += (speed - velocity) * .3;
+    mesh_ship.translateY(velocity);
 
     if (keys.a) {//a면 왼쪽 회전
       mesh_ship.rotateY(0.02);
@@ -735,23 +786,23 @@ function space_ship_render(){
     //이부분에서 물체 회전 할 때 카메라 회전하는게 조금 부자연스러워서 로직 수정해야함
     a.lerp(mesh_ship.position, 0.4);
     //b.copy(goal_ship.position);//goal == camera[0]
-    
-      dir.copy( a ).sub( b ).normalize();
-      const dis = a.distanceTo( b ) - coronaSafetyDistance;
-      // goal_ship.position.addScaledVector( dir, dis );
-      // goal_ship.position.lerp(temp, 0.1);
-      temp.setFromMatrixPosition(follow.matrixWorld);
-      
-      //camera[1].position.set( mesh_ship.position.x,mesh_ship.position.y,mesh_ship.position.z + value_z);
-      
-      camera[1].lookAt( mesh_ship.position );
-      controls2.target.set(mesh_ship.position.x,mesh_ship.position.y,mesh_ship.position.z);
-      spotlight2.value = 3;
-      spotlight2.position.set(camera[1].position.x,camera[1].position.y,camera[1].position.z);
-    
-      renderer.render( scene, camera[1] );
-      controls2.update();
-      ///////////////////////
+
+    dir.copy(a).sub(b).normalize();
+    const dis = a.distanceTo(b) - coronaSafetyDistance;
+    // goal_ship.position.addScaledVector( dir, dis );
+    // goal_ship.position.lerp(temp, 0.1);
+    temp.setFromMatrixPosition(follow.matrixWorld);
+
+    //camera[1].position.set( mesh_ship.position.x,mesh_ship.position.y,mesh_ship.position.z + value_z);
+
+    camera[1].lookAt(mesh_ship.position);
+    controls2.target.set(mesh_ship.position.x, mesh_ship.position.y, mesh_ship.position.z);
+    spotlight2.value = 3;
+    spotlight2.position.set(camera[1].position.x, camera[1].position.y, camera[1].position.z);
+
+    renderer.render(scene, camera[1]);
+    controls2.update();
+    ///////////////////////
 
   }
 }
