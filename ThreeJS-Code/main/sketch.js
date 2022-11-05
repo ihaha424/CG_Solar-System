@@ -576,12 +576,59 @@ window.onload = function init() {
 
     moveCam(tempV.x, tempV.y, tempV.z, tempV.x, tempV.y, tempV.z, plants_Mesh[0]);
     //moveCam(scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z,scene.children[object_num].position.x,scene.children[object_num].position.y,scene.children[object_num].position.z);
+    var card = document.querySelector(".planet-card");
+      card.style.visibility = "visible";//버튼 누르면 설명창 보이게
+      var p_name = event.target.innerText;
+
+      let planet_index;
+      planet_index = getplanetIndex(p_name);
+      var target_planet = (Planet_info.PLANETS[planet_index]);
+
+      let x = document.getElementsByClassName("title");
+      x = document.getElementsByTagName("h2")[0];
+      x.innerText=target_planet.name;
+      
+      let meanTemp = document.querySelector(".meanTemp");
+      meanTemp.innerText = target_planet.meanTemp;
+
+      let caption = document.querySelector(".caption");
+      caption.innerText = target_planet.caption;
+
+      let description = document.querySelector(".description");
+      description.innerText = target_planet.description;
+
+      let radius = document.querySelector(".Radius");
+      radius.innerText = target_planet.radius +" km";
+
+      let timesLarger = document.querySelector(".timesLarger");
+      timesLarger.innerText = target_planet.timesLarger +"X";
+
+      let distanceFromSun = document.querySelector(".distanceFromSun");
+      distanceFromSun.innerText = target_planet.distanceFromSun +" AU";
+
+      let year = document.querySelector(".year");
+      year.innerText = target_planet.year;
+
+      let day = document.querySelector(".day");
+      day.innerText = target_planet.day;
+
+      let moons = document.querySelector(".moons");
+      moons.innerText = target_planet.moons;
+
+      document.querySelector(".close").onclick = function(){
+        card = document.querySelector(".planet-card");
+        card.style.visibility = "hidden";//x누르면 설명창 꺼짐
+      };
+
+      x = document.querySelector(".planet-img");
+      x.src = "./assets/cards/"+p_name.toLowerCase()+".png";
   };
   labelContainerElem.childNodes[0].onclick = function (event) {
     value_z = 15;
     sunMesh.updateWorldMatrix(true, false);
     plants_Mesh[0].getWorldPosition(tempV);
     moveCam(tempV.x, tempV.y, tempV.z, tempV.x, tempV.y, tempV.z, plants_Mesh[0]);
+    
   };
 
   //plant
@@ -602,12 +649,17 @@ window.onload = function init() {
       var card = document.querySelector(".planet-card");
       card.style.visibility = "visible";//버튼 누르면 설명창 보이게
       var p_name = event.target.innerText;
-      let x = document.getElementsByClassName("title");
-      x = document.getElementsByTagName("h2")[0];
       let planet_index;
-      x.innerText=p_name;
       planet_index = getplanetIndex(p_name);
       var target_planet = (Planet_info.PLANETS[planet_index]);
+
+      let x = document.getElementsByClassName("title");
+      x = document.getElementsByTagName("h2")[0];
+      x.innerText=target_planet.name;
+  
+
+      let meanTemp = document.querySelector(".meanTemp");
+      meanTemp.innerText = target_planet.meanTemp;
 
       let caption = document.querySelector(".caption");
       caption.innerText = target_planet.caption;
@@ -652,7 +704,7 @@ window.onload = function init() {
   }
 
 
-  function getplanetIndex(name){
+  function getplanetIndex(name){//행성의 이름을 index화 하여 html에서 element 찾기위한 함수
     let p_index=0;
     switch(name){
       case "MERCURY":
@@ -692,6 +744,8 @@ window.onload = function init() {
     controls.maxDistance = 1000000;
     controls.minDistance = 30;
     moveCam(0, 5000, 0, 0, 0, 0, 0);
+    var card = document.querySelector(".planet-card");
+    card.style.visibility = "hidden";//init 누르면 설명창 꺼짐
   };
 
   /*
