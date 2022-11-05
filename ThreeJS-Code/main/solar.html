@@ -105,9 +105,23 @@
       }
       #Button_time {
          right: 5%;
-         top: 65%;
+         top: 75%;
       }
-
+      #Button_time {
+         right: 5%;
+         top: 75%;
+         height: 12%;
+      }
+      #timeScaleSlider{
+         right: 5%;
+         top: 70%;
+         width: 120px;
+      }
+      #Time_Scale_Slider {
+         right: 5%;
+         top: 65%;
+         font-size: 10px;
+      }
       .md-mobile-picker-header {
          font-size: 14px;
       }
@@ -120,7 +134,7 @@
          border: 1px solid #ccc;
          border-radius: 0;
          font-family: arial, verdana, sans-serif;
-         font-size: 14px;
+         font-size: 11px;
          box-sizing: border-box;
          -webkit-appearance: none;
       }
@@ -181,21 +195,17 @@
    </div>
    <div id=Button_Space_ship class="Button">Space Ship!</div>
 
-
+   <div id=Time_Scale_Slider class="Button">
+      Time Scale<br>
+      range : +-10000000<br>
+      <input id ="timeScaleSlider" class="Button" type="text"/>
+   </div>
    <div id=Button_time class="Button">
-      <div class="mbsc-form-group">
-         <div class="mbsc-row">
-            <div class="mbsc-col-8">
-               <input id="demo-mobile-picker-button" class="md-mobile-picker-input" />
-            </div>
-            <div class="mbsc-col-4">
-               <button mbsc-button data-variant="outline" data-color="primary" id="show-mobile-date-picker"
+               <input id="demo-mobile-picker-button" class="md-mobile-picker-input"/>
+               <button mbsc-button data-variant="outline" data-color="white" id="show-mobile-date-picker"
                   class="md-mobile-picker-button">
-                  Show picker
+                  Select Date
                </button>
-            </div>
-         </div>
-      </div>
    </div>
    <script>
       mobiscroll.setOptions({

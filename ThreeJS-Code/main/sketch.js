@@ -66,6 +66,7 @@ var line_visualize = true;
 //space_ship button
 var s_flag = true;
 var shipRenderID;
+var timeScale = 1;
 window.onload = function init() {
   //const realSunSize = Planet.SUN.radius;
   //console.log(realSunSize);
@@ -415,51 +416,56 @@ window.onload = function init() {
     // else
     //   line.geometry.setFromPoints([])
 
-
+    document.
+      getElementById("timeScaleSlider").
+      addEventListener("change", function (event) {
+      timeScale = Number(event.target.value);
+      });
+      
     //mercuryGroup.rotation.y = movement * 0.5;
-    computed = CalculateOrbit.cal_orbit('MERCURY', 1000);
+    computed = CalculateOrbit.cal_orbit('MERCURY', timeScale);
     mercuryGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     mercuryMesh.rotation.y = movement * 0.20;
 
     //console.log(computed.pos.x/Index.AU,computed.pos.y/Index.AU)
-    computed = CalculateOrbit.cal_orbit('VENUS', 1000);
+    computed = CalculateOrbit.cal_orbit('VENUS', timeScale);
     venusGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //venusGroup.rotation.y = movement * 0.35;
     venusMesh.rotation.y = movement * 0.18;
 
-    computed = CalculateOrbit.cal_orbit('EARTH', 1000);
+    computed = CalculateOrbit.cal_orbit('EARTH', timeScale);
     earthGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //earthGroup.rotation.y = movement * 0.3;
     earthMesh.rotation.y = movement * 0.15;
 
-    computed = CalculateOrbit.cal_orbit('MARS', 1000);
+    computed = CalculateOrbit.cal_orbit('MARS', timeScale);
     marsGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //marsGroup.rotation.y = movement * 0.2;
     marsMesh.rotation.y = movement * 0.2;
 
-    computed = CalculateOrbit.cal_orbit('JUPITER', 1000);
+    computed = CalculateOrbit.cal_orbit('JUPITER', timeScale);
     jupiterGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //jupiterGroup.rotation.y = movement * 0.05;
     jupiterMesh.rotation.y = movement * 0.05;
 
-    computed = CalculateOrbit.cal_orbit('SATURN', 1000);
+    computed = CalculateOrbit.cal_orbit('SATURN', timeScale);
     saturnGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     saturnMesh.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     // console.log(saturnMesh);
     //saturnGroup.rotation.y = movement * 0.03;
     saturnMesh.rotation.y = movement * 0.25;
 
-    computed = CalculateOrbit.cal_orbit('URANUS', 1000);
+    computed = CalculateOrbit.cal_orbit('URANUS', timeScale);
     uranusGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //uranusGroup.rotation.y = movement * 0.02;
     uranusMesh.rotation.y = movement * 0.25;
 
-    computed = CalculateOrbit.cal_orbit('NEPTUNE', 1000);
+    computed = CalculateOrbit.cal_orbit('NEPTUNE', timeScale);
     neptuneGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //neptuneGroup.rotation.y = movement * 0.015;
     neptuneMesh.rotation.y = movement * 0.25;
 
-    computed = CalculateOrbit.cal_orbit('PLUTO', 1000);
+    computed = CalculateOrbit.cal_orbit('PLUTO', timeScale);
     plutoGroup.position.set(computed.pos.x / Index.AU, 0, computed.pos.y / Index.AU);
     //plutoGroup.rotation.y = movement * 0.005;
     plutoMesh.rotation.y = movement * 0.2;
