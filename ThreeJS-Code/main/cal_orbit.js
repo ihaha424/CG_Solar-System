@@ -8,7 +8,7 @@ var day;
 export function cal_orbit(planetName,timeScale){
   getTimeFromHTML();
   today.setTime(today.getTime() + 1*timeScale);
-  console.log(today);
+  //console.log(today);
 
   //var seconds = new Date().getSeconds();
   //console.log(seconds);
