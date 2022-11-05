@@ -401,11 +401,11 @@ window.onload = function init() {
   function returnOrbit (planet) {
     var computed_list = []
 
-    for (var i = 0; i < 10; ) {
+    for (var i = 0; i < 4000; i++) {
       console.log(planet)
-      computed = CalculateOrbit.cal_orbit(planet, 10);
+      computed = CalculateOrbit.cal_orbit(planet, 10000000);
       
-      computed_list.push( (computed.pos.x, computed.pos.y));
+      computed_list.push( new THREE.Vector3(computed.pos.x / Index.AU, 0 ,computed.pos.y / Index.AU));
 
     }
 
@@ -423,7 +423,12 @@ window.onload = function init() {
 
   // draw each frame
   render();
-  // line.geometry.setFromPoints(returnOrbit('MERCURY'))
+  line.geometry.setFromPoints(returnOrbit('MERCURY'))
+  console.log(returnOrbit('MERCURY'))
+
+  line.geometry.setFromPoints(returnOrbit('MERCURY'))
+
+
 
   function render(time) {
     // var time = clock.getElapsedTime(); 
@@ -848,6 +853,7 @@ var speed = 0.0;
 var gltfloader = new THREE.GLTFLoader();
 gltfloader.load('assets/spaceship.gltf', function (gltf) {
   mesh_ship = gltf.scene.children[0];
+  mesh_ship.scale.set(0.1, 0.1, 0.1)
   //spaceship.scene.position.set(tempEarth.x,tempEarth.y + 2,tempEarth.z);
   // spaceship.scene.scale.set(0.01, 0.01, 0.01);
   // spaceship.scene = gltf.scene;
