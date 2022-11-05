@@ -8,8 +8,6 @@ const settings = {
   context: "webgl",
   scaleToView: true
 };
-
-
 //compute angle
 function angleToRad(angle) {
   return Math.PI / 180 * angle
@@ -404,7 +402,6 @@ window.onload = function init() {
   // line.geometry.setFromPoints(returnOrbit('MERCURY'))
 
   function render(time) {
-
     // var time = clock.getElapsedTime(); 
     // console.log(time);
     controls.update();

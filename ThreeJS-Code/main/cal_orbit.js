@@ -1,9 +1,19 @@
 import * as Planet from './src/constants/planets.js';
 import * as Index from './src/constants/index.js';
+let changed = false;
+let today = new Date();
+var year;
+var month;
+var day;
 export function cal_orbit(planetName,timeScale){
+  getTimeFromHTML();
+  today.setTime(today.getTime() + 1*timeScale);
+  console.log(today);
 
-  let today = new Date();
-  let epochTime = (today - Index.J2000)/1000 * timeScale; // 현재 시간(단위 : 초)
+  //var seconds = new Date().getSeconds();
+  //console.log(seconds);
+
+  let epochTime = (today - Index.J2000)/1000; // 현재 시간(단위 : 초)
   let tDays = epochTime / Index.DAY; // 일수
 
   let T = tDays / Index.CENTURY; // 지난 세기
@@ -110,3 +120,16 @@ function getEccentricity(callback, x0, maxCount) {
   //console.log(computed.v);
   return computed;
 }
+function getTimeFromHTML() {
+  var temp;
+  document.
+    getElementById("demo-mobile-picker-button").
+    addEventListener("change", function (event) {
+      temp = event.target.value;
+      year = temp.split('년');
+      month = year[1].split('월');
+      day = month[1].split('일');
+      //console.log(seconds);
+      today = new Date(year[0], month[0], day[0]);
+    });
+  }
