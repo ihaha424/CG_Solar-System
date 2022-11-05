@@ -424,7 +424,7 @@ window.onload = function init() {
   line.geometry.setFromPoints(returnOrbit('MERCURY'))
   console.log(returnOrbit('MERCURY'))
 
-  line.geometry.setFromPoints(returnOrbit('MERCURY'))
+  line.geometry.setFromPoints(returnOrbit('VENUS'))
 
 
 
@@ -717,8 +717,9 @@ var mesh_ship = new THREE.Mesh();
 var speed = 0.0;
 var gltfloader = new THREE.GLTFLoader();
 gltfloader.load('assets/spaceship.gltf', function (gltf) {
+  gltf.scene.children[0].scale.set(0.1, 0.1, 0.1)
   mesh_ship = gltf.scene.children[0];
-  mesh_ship.scale.set(0.1, 0.1, 0.1)
+  console.log(mesh_ship)
   //spaceship.scene.position.set(tempEarth.x,tempEarth.y + 2,tempEarth.z);
   // spaceship.scene.scale.set(0.01, 0.01, 0.01);
   // spaceship.scene = gltf.scene;
@@ -777,7 +778,7 @@ function space_ship_render() {
 
   });
   value_z = 5;
-  camera[1].position.set(mesh_ship.position.x, mesh_ship.position.y + 3, mesh_ship.position.z - 5);
+  camera[1].position.set(mesh_ship.position.x, mesh_ship.position.y + 1, mesh_ship.position.z - 2);
   animate_spaceship();
 
 
@@ -789,9 +790,9 @@ function space_ship_render() {
 
 
     if (keys.j)//w면 앞으로
-      speed = speed + 0.05;
+      speed = speed + 0.01;
     else if (keys.k)//w면 앞으로
-      speed = speed - 0.05;
+      speed = speed - 0.01;
     else if (keys.h)//w면 앞으로
       speed = 0;
     // else if ( keys.s )//s면 뒤로
@@ -825,7 +826,7 @@ function space_ship_render() {
 
     camera[1].lookAt(mesh_ship.position);
     controls2.target.set(mesh_ship.position.x, mesh_ship.position.y, mesh_ship.position.z);
-    spotlight2.value = 3;
+    spotlight2.value = 1;
     spotlight2.position.set(camera[1].position.x, camera[1].position.y, camera[1].position.z);
 
     renderer.render(scene, camera[1]);
