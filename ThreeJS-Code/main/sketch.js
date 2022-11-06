@@ -269,13 +269,6 @@ window.onload = function init() {
   planets_Mesh = planets_Mesh.concat(earthMesh);//-DongMin
   earthMesh.rotation.y = Planet.EARTH.tilt;
 
-  const moonGroup = new THREE.Group();
-  const moonMesh = new THREE.Mesh(geometry, moonMaterial);
-  createPlanet(scene, moonMesh, moonGroup, 32, (Planet.EARTH.radius / Planet.SUN.radius * sunSize, "MOON")*(17/64))
-  planets_Mesh = planets_Mesh.concat(moonMesh)
-  earthGroup.add(moonGroup);
-
-
   const marsGroup = new THREE.Group();
   const marsMesh = new THREE.Mesh(geometry, marsMaterial);
   createPlanet(scene, marsMesh, marsGroup, 34, Planet.MARS.radius / Planet.SUN.radius * sunSize, "MARS");//-DongMin
@@ -336,6 +329,11 @@ window.onload = function init() {
   createPlanet(scene, plutoMesh, plutoGroup, 64, Planet.PLUTO.radius / Planet.SUN.radius * sunSize, "PLUTO");//-DongMin
   planets_Mesh = planets_Mesh.concat(plutoMesh);//-DongMin
   plutoMesh.rotation.y = Planet.PLUTO.tilt;
+
+  const moonGroup = new THREE.Group();
+  const moonMesh = new THREE.Mesh(geometry, moonMaterial);
+  createPlanet(scene, moonMesh, moonGroup, 32, (Planet.EARTH.radius / Planet.SUN.radius * sunSize, "MOON")*(17/64))
+  earthGroup.add(moonGroup);
 
   function returnOrbit (planet, radius) {
     var computed_list = []
