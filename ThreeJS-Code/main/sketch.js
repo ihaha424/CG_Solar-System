@@ -63,6 +63,7 @@ var planets_Mesh;
 //button spotlight
 var spotlight2
 var card
+var flag_camera = 0;
 
 
 //space_ship button
@@ -97,8 +98,8 @@ window.onload = function init() {
   controls = new THREE.OrbitControls(camera[0], renderer.domElement);
   controls.target.set(30, 0, 0);
   controls2 = new THREE.OrbitControls(camera[1], renderer.domElement);
-  controls2.maxDistance = 50;
-  controls2.minDistance = 50;
+  controls2.maxDistance = 5;
+  controls2.minDistance = 5;
 
   //picking
   class PickHelper {
@@ -124,6 +125,8 @@ window.onload = function init() {
         // 첫 번째 물체가 제일 가까우므로 해당 물체를 고릅니다
         this.pickedObject = intersectedObjects[0].object;
         if (this.flag == true) {
+          flag_camera = 0;
+          s_flag = true;
           this.flag = false;
           value_z = this.pickedObject.userData;
           this.pickedObject.getWorldPosition(tempV);
@@ -568,7 +571,7 @@ window.onload = function init() {
 
     spotlight2.position.set(camera[0].position.x, camera[0].position.y, camera[0].position.z);
     time *= 0.001;
-    pickHelper.pick(pickPosition, planets_Mesh, camera[0]);
+    pickHelper.pick(pickPosition, planets_Mesh, camera[flag_camera]);
 
 
     requestAnimationFrame(render);
@@ -883,10 +886,9 @@ function moveCam(eye_x, eye_y, eye_z, target_x, target_y, target_z, Mesh) {
 * Spcae ship
 */
 var mesh_ship = new THREE.Mesh();
-var speed = 0.0;
 var gltfloader = new THREE.GLTFLoader();
 gltfloader.load('assets/spaceship.gltf', function (gltf) {
-  gltf.scene.children[0].scale.set(0.1, 0.1, 0.1)
+  gltf.scene.children[0].scale.set(0.1, 0.1, 0.1);
   mesh_ship = gltf.scene.children[0];
   console.log(mesh_ship)
   //spaceship.scene.position.set(tempEarth.x,tempEarth.y + 2,tempEarth.z);
@@ -897,7 +899,7 @@ gltfloader.load('assets/spaceship.gltf', function (gltf) {
 function space_ship_render() {
   window.cancelAnimationFrame(moveID);
   window.cancelAnimationFrame(shipRenderID);
-
+  var speed = 0.0;
   var follow, keys;
   var coronaSafetyDistance = 0.3;
   var velocity = 0.0;
@@ -912,7 +914,7 @@ function space_ship_render() {
   planets_Mesh[3].getWorldPosition(tempEarth);
   console.log(tempEarth.x, tempEarth.y + 2, tempEarth.z)
 
-  mesh_ship.position.set(tempEarth.x, tempEarth.y + 2, tempEarth.z);
+  mesh_ship.position.set(tempEarth.x, tempEarth.y + 5, tempEarth.z);
   scene.add(mesh_ship);
 
   //goal_ship = new THREE.Object3D;
@@ -947,6 +949,7 @@ function space_ship_render() {
 
   });
   value_z = 5;
+  flag_camera = 1;
   camera[1].position.set(mesh_ship.position.x, mesh_ship.position.y + 1, mesh_ship.position.z - 2);
   animate_spaceship();
 
